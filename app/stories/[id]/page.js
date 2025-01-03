@@ -17,6 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { jsPDF } from "jspdf";
+import html2canvas from 'html2canvas';
+import "@/app/styles/fonts.css";
 
 export default function StoryPage({ params }) {
   const { user } = useUser();
@@ -25,7 +28,130 @@ export default function StoryPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedFont, setSelectedFont] = useState("আবু জে এম আক্কাস");
   const router = useRouter();
+
+  const fonts = [
+    "আবু জে এম আক্কাস",
+    "চায়না তিস্তা",
+    "হাসান প্রতিলিপি",
+    "শহীদ শাফকাত সামির",
+    "শহীদ তাহমিদ তামিম"
+  ];
+
+  const generatePDF = async () => {
+    if (!story) return;
+
+    try {
+      console.log('Starting PDF generation...');
+      
+      // Create a temporary div to render the content
+      const tempDiv = document.createElement('div');
+      tempDiv.style.padding = '60px'; // Increased padding for better margins
+      tempDiv.style.width = '595px'; // A4 width in pixels
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.backgroundColor = 'white';
+      
+      // Add content to the div with styling
+      tempDiv.innerHTML = `
+        <style>
+          @font-face {
+            font-family: '${selectedFont}';
+            src: url('/fonts-ttf/${selectedFont}.ttf') format('truetype');
+          }
+          @page {
+            margin: 60px;
+          }
+        </style>
+        <div style="font-family: '${selectedFont}', Arial; opacity: 1; max-width: 475px; margin: 0 auto;">
+          <h1 style="font-size: 24px; margin-bottom: 30px; font-family: '${selectedFont}', Arial; text-align: center;">${story.title}</h1>
+          <div style="font-size: 12px; margin-bottom: 15px; color: #666;">
+            Date: ${new Date(story.createdAt).toLocaleDateString()}
+          </div>
+          <div style="font-size: 12px; margin-bottom: 30px; color: #666;">
+            Author: ${story.authorName || "Anonymous"}
+          </div>
+          <div style="font-size: 14px; line-height: 1.8; white-space: pre-wrap; font-family: '${selectedFont}', Arial; text-align: justify;">
+            ${story.content}
+          </div>
+        </div>
+      `;
+      
+      // Add the temporary div to the document
+      document.body.appendChild(tempDiv);
+
+      // Wait for fonts to load
+      await document.fonts.ready;
+      
+      console.log('Converting content to canvas...');
+      const canvas = await html2canvas(tempDiv, {
+        scale: 2, // Higher resolution
+        useCORS: true,
+        logging: true,
+        backgroundColor: 'white',
+        onclone: (clonedDoc) => {
+          const clonedDiv = clonedDoc.querySelector('div');
+          clonedDiv.style.position = 'static';
+          clonedDiv.style.left = '0';
+        }
+      });
+      
+      // Remove the temporary div
+      document.body.removeChild(tempDiv);
+
+      console.log('Creating PDF...');
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Create PDF with proper dimensions
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'px',
+        format: 'a4',
+        compress: true
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const marginTop = 40; // Top margin in pixels
+      const marginBottom = 40; // Bottom margin in pixels
+      
+      const aspectRatio = canvas.width / canvas.height;
+      const imgWidth = pdfWidth;
+      const imgHeight = pdfWidth / aspectRatio;
+
+      let heightLeft = imgHeight;
+      let position = marginTop; // Start from top margin
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
+      heightLeft -= (pdfHeight - marginTop - marginBottom); // Subtract margins from available height
+
+      // Add other pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight + marginTop; // Add top margin to each page
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
+        heightLeft -= (pdfHeight - marginTop - marginBottom); // Subtract margins from available height
+      }
+
+      console.log('Saving PDF...');
+      pdf.save(`${story.title}.pdf`);
+      console.log('PDF generation completed successfully');
+
+    } catch (error) {
+      console.error('PDF Generation Error:', {
+        message: error.message,
+        stack: error.stack,
+        font: selectedFont,
+        story: {
+          title: story.title,
+          contentLength: story.content?.length
+        }
+      });
+      alert(`Error generating PDF: ${error.message}`);
+    }
+  };
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -122,27 +248,46 @@ export default function StoryPage({ params }) {
               Back to Stories
             </Button>
           </Link>
-          {isAuthor && (
-            <div className="flex gap-2">
-              <Link href={`/stories/${story._id}/edit`}>
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white">
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  Edit Story
+          <div className="flex items-center gap-4">
+            {isAuthor && (
+              <>
+                <Link href={`/stories/${story._id}/edit`}>
+                  <Button variant="outline" className="hover:bg-gray-100">
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit Story
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  className="hover:bg-red-50 text-red-600 border-red-200"
+                  onClick={() => setShowDeleteDialog(true)}
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </Button>
-              </Link>
-              <Button 
-                variant="outline" 
-                className="border-red-200 hover:bg-red-50 text-red-600"
-                onClick={() => setShowDeleteDialog(true)}
-                disabled={isDeleting}
+              </>
+            )}
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedFont}
+                onChange={(e) => setSelectedFont(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{ fontFamily: selectedFont }}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
+                {fonts.map((font) => (
+                  <option key={font} value={font} style={{ fontFamily: font }}>
+                    {font}
+                  </option>
+                ))}
+              </select>
+              <Button onClick={generatePDF} variant="outline" className="hover:bg-gray-100">
+                Download PDF
               </Button>
             </div>
-          )}
+          </div>
         </div>
-        <h1 className="text-4xl font-bold mb-4 text-gray-900">
+        <h1 className="text-4xl font-bold mb-4 text-gray-900" style={{ fontFamily: selectedFont }}>
           {story.title}
         </h1>
         <div className="flex items-center gap-6 text-sm text-gray-500">
@@ -152,13 +297,20 @@ export default function StoryPage({ params }) {
           </div>
           <div className="flex items-center gap-2">
             <User2 className="w-4 h-4" />
-            <span>{story.authorName} {isAuthor && "(You)"}</span>
+            {story.authorUsername ? (
+              <Link href={`/${story.authorUsername}`} className="hover:text-orange-600 transition-colors">
+                <span>{story.authorName} {isAuthor && "(You)"}</span>
+              </Link>
+            ) : (
+              <span>{story.authorName} {isAuthor && "(You)"}</span>
+            )}
           </div>
         </div>
       </div>
 
       <div 
         className="prose max-w-none"
+        style={{ fontFamily: selectedFont }}
         dangerouslySetInnerHTML={{ __html: story.content }}
       />
 

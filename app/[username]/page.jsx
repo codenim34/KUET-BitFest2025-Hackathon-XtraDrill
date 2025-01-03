@@ -1,30 +1,34 @@
 import { currentUser } from "@clerk/nextjs";
-import { fetchUserByClerkId } from "@/lib/actions/user.actions";
+import { fetchUserByUsername } from "@/lib/actions/user.actions";
 import { getUserStories, getLikedStories } from "@/lib/actions/story.actions";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, User2, Heart, Link as LinkIcon } from "lucide-react";
+import { CalendarDays, User2, Heart } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { CopyButton } from "@/components/ui/copy-button";
+import { notFound } from "next/navigation";
 
 const truncateContent = (content) => {
   const plainText = content.replace(/<[^>]+>/g, '');
   return plainText.length > 100 ? plainText.substring(0, 100) + "..." : plainText;
 };
 
-export default async function ProfilePage() {
-  const user = await currentUser();
-  if (!user) return null;
+export default async function UserProfilePage({ params }) {
+  const { username } = params;
+  const currentUserData = await currentUser();
+  
+  // Fetch the profile user by username
+  const profileUser = await fetchUserByUsername(username);
+  
+  if (!profileUser) {
+    notFound();
+  }
 
   try {
-    const userInfo = await fetchUserByClerkId(user.id);
-    const publicStoriesResponse = await getUserStories(user.id, "public");
-    const privateStoriesResponse = await getUserStories(user.id, "private");
-    const likedStoriesResponse = await getLikedStories(user.id);
+    const publicStoriesResponse = await getUserStories(profileUser.clerkId, "public");
+    const likedStoriesResponse = await getLikedStories(profileUser.clerkId);
     
     const publicStories = publicStoriesResponse.success ? publicStoriesResponse.data : [];
-    const privateStories = privateStoriesResponse.success ? privateStoriesResponse.data : [];
     const likedStories = likedStoriesResponse.success ? likedStoriesResponse.data : [];
 
     const StoryGrid = ({ stories }) => (
@@ -54,7 +58,7 @@ export default async function ProfilePage() {
                         <Heart 
                           className={cn(
                             "w-4 h-4",
-                            story.loves?.includes(user.id) ? "fill-red-500 text-red-500" : "text-gray-500"
+                            currentUserData && story.loves?.includes(currentUserData.id) ? "fill-red-500 text-red-500" : "text-gray-500"
                           )}
                         />
                         <span>{story.loves?.length || 0}</span>
@@ -74,51 +78,33 @@ export default async function ProfilePage() {
         <div className="flex flex-col items-center mb-8">
           <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
             <Image
-              src={user.imageUrl || "/default-avatar.png"}
-              alt={user.firstName}
+              src={profileUser.image_url || "/default-avatar.png"}
+              alt={profileUser.firstName}
               width={96}
               height={96}
               className="object-cover w-full h-full"
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {user.firstName} {user.lastName}
+            {profileUser.firstName} {profileUser.lastName}
           </h1>
-          <p className="text-gray-500">{user.emailAddresses[0].emailAddress}</p>
-          
-          <div className="mt-4 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg">
-            <LinkIcon className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-600 select-all">
-              {userInfo.userName}
-            </span>
-            <CopyButton 
-              text={userInfo.userName}
-            />
-          </div>
+          <p className="text-gray-500">@{profileUser.userName}</p>
         </div>
 
         <Tabs defaultValue="public" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full max-w-[400px] mx-auto mb-8">
+          <TabsList className="grid grid-cols-2 w-full max-w-[400px] mx-auto mb-8">
             <TabsTrigger value="public" className="flex items-center gap-2">
               <User2 className="w-4 h-4" />
-              Public
-            </TabsTrigger>
-            <TabsTrigger value="private" className="flex items-center gap-2">
-              <User2 className="w-4 h-4" />
-              Private
+              Public Stories
             </TabsTrigger>
             <TabsTrigger value="liked" className="flex items-center gap-2">
               <Heart className="w-4 h-4" />
-              Loved
+              Loved Stories
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="public">
             <StoryGrid stories={publicStories} />
-          </TabsContent>
-
-          <TabsContent value="private">
-            <StoryGrid stories={privateStories} />
           </TabsContent>
 
           <TabsContent value="liked">
@@ -128,10 +114,10 @@ export default async function ProfilePage() {
       </div>
     );
   } catch (error) {
-    console.error("Error in ProfilePage:", error);
+    console.error("Error fetching user data:", error);
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <p className="text-red-500">Something went wrong. Please try again later.</p>
+      <div className="container mx-auto px-4 py-8">
+        <p className="text-red-500">Error loading profile data.</p>
       </div>
     );
   }
