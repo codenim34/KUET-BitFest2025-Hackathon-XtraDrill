@@ -9,7 +9,8 @@ const ADMIN_USER_IDS = ['user_2r6nKR4A6JG1vSRXXDXWzRaSV6S', 'user_2r6n5oSeNHtUf2
 export default authMiddleware({
   publicRoutes: [
     "/",                    // Landing page       // Individual public story views
-    "/sign-in",           // Auth pages
+    "/sign-in", 
+    "/api/transliterate",        // Auth pages
     "/sign-up"
   ],
   ignoredRoutes: ["/api/webhooks(.*)"],
