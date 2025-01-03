@@ -15,11 +15,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import Image from 'next/image';
+import okkhorLogo from '../../public/okkhor-logo.png';
 
 function FeatureCard({ icon, title, description }) {
   return (
     <div className="bg-white p-6 md:p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-      <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-6">
+      <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-6">
         {icon}
       </div>
       <h3 className="text-2xl font-semibold mb-3">{title}</h3>
@@ -32,11 +34,11 @@ function SDGCard({ icon, number, title, description }) {
   return (
     <div className="bg-white p-6 md:p-10 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-200">
       <div className="flex flex-col sm:flex-row sm:items-center mb-6">
-        <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-4 sm:mb-0 sm:mr-6">
+        <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-4 sm:mb-0 sm:mr-6">
           {icon}
         </div>
         <div>
-          <div className="text-sm text-indigo-600 font-semibold">
+          <div className="text-sm text-orange-600 font-semibold">
             SDG {number}
           </div>
           <h3 className="text-2xl font-bold">{title}</h3>
@@ -64,10 +66,13 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-8 py-4">
             {/* Logo */}
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <Terminal className="h-8 w-8 sm:h-10 sm:w-10 text-indigo-600" />
-              <span className="text-2xl sm:text-3xl font-bold text-gray-900">
-              অক্ষর
-              </span>
+              <Image 
+                src={okkhorLogo}
+                alt="Orkkhor Logo" 
+                width={90} 
+                height={30} 
+                className="text-2xl sm:text-3xl font-bold text-gray-900"
+              />
             </div>
 
             {/* Hamburger Menu Button (Visible on Mobile) */}
@@ -128,7 +133,7 @@ const LandingPage = () => {
                 SDGs
               </Link>
               <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
-                <button className="bg-[#000033] text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors">
+                <button className="bg-[#000033] text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-orange-700 transition-colors">
                   Get Started
                 </button>
               </Link>
@@ -164,7 +169,7 @@ const LandingPage = () => {
                   href={isSignedIn ? "/dashboard" : "/sign-in"}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <button className="bg-[#000033] text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full">
+                  <button className="bg-[#000033] text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-orange-700 transition-colors w-full">
                     Get Started
                   </button>
                 </Link>
@@ -180,7 +185,7 @@ const LandingPage = () => {
               <div className="md:w-1/2">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                   Hero Text Here
-                  <span className="text-indigo-600"> With Highlight</span>
+                  <span className="text-orange-600"> With Highlight</span>
                 </h1>
                 <p className="text-lg sm:text-xl text-gray-700 mb-10 max-w-3xl mx-auto md:mx-0 px-4">
                   Your compelling description goes here. Make it engaging and impactful
@@ -188,12 +193,12 @@ const LandingPage = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
                   <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
-                    <button className="bg-indigo-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center w-full sm:w-auto">
+                    <button className="bg-orange-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-orange-700 transition-colors flex items-center justify-center w-full sm:w-auto">
                       Start Learning <ChevronRight className="ml-3 h-6 w-6" />
                     </button>
                   </Link>
                   <Link href="/watch-demo">
-                    <button className="border-2 border-gray-300 text-gray-700 px-10 py-4 rounded-full text-lg font-semibold hover:border-indigo-600 hover:text-indigo-600 transition-colors w-full sm:w-auto">
+                    <button className="border-2 border-gray-300 text-gray-700 px-10 py-4 rounded-full text-lg font-semibold hover:border-orange-600 hover:text-orange-600 transition-colors w-full sm:w-auto">
                       Watch Demo
                     </button>
                   </Link>
@@ -217,19 +222,19 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
               <div className="text-center">
-                <div className="text-4xl font-bold text-indigo-600">100+</div>
+                <div className="text-4xl font-bold text-orange-600">100+</div>
                 <div className="text-lg text-gray-700">Statistic 1</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-indigo-600">50K+</div>
+                <div className="text-4xl font-bold text-orange-600">50K+</div>
                 <div className="text-lg text-gray-700">Statistic 2</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-indigo-600">24/7</div>
+                <div className="text-4xl font-bold text-orange-600">24/7</div>
                 <div className="text-lg text-gray-700">Statistic 3</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-indigo-600">100%</div>
+                <div className="text-4xl font-bold text-orange-600">100%</div>
                 <div className="text-lg text-gray-700">Statistic 4</div>
               </div>
             </div>
@@ -301,16 +306,16 @@ const LandingPage = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-indigo-600 py-20">
+        <div className="bg-orange-600 py-20">
           <div className="max-w-7xl mx-auto px-8 text-center">
             <h2 className="text-4xl font-bold text-white mb-8">
               Your Call to Action Here
             </h2>
-            <p className="text-xl text-indigo-100 mb-12 max-w-3xl mx-auto">
+            <p className="text-xl text-orange-100 mb-12 max-w-3xl mx-auto">
               Compelling reason why users should take action now.
             </p>
             <Link href="/join">
-              <button className="bg-white text-indigo-600 px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button className="bg-white text-orange-600 px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
                 Call To Action Button
               </button>
             </Link>

@@ -4,7 +4,9 @@
 import { UserButton } from "@clerk/nextjs";
 import { Pen, Terminal } from "lucide-react";
 import Link from "next/link";
+import Image from 'next/image';
 import { useRouter } from "next/navigation";
+import okkhorLogo from '../../public/okkhor-logo.png';
 
 const Header = () => {
   const router = useRouter();
@@ -13,8 +15,13 @@ const Header = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 h-20 flex items-center justify-between px-8 py-4 bg-gray-900">
       {/* Logo Section - Replaced with Terminal icon and text */}
       <Link href="/" className="flex items-center">
-        <Pen className="h-10 w-10 text-indigo-600 pr-2" />
-        <span className="text-3xl font-bold text-white">  অক্ষর</span>
+        <Image 
+          src={okkhorLogo}
+          alt="Orkkhor Logo" 
+          width={90} 
+          height={30} 
+          className="text-2xl sm:text-3xl font-bold text-gray-900"
+        />
       </Link>
 
       {/* Optional: Add navigation links or user-related buttons */}

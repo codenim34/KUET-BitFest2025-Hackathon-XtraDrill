@@ -61,48 +61,48 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}      
       
-      <div className={`sidebar-content fixed top-20 left-0 h-full bg-sky-50 transition-all duration-300 z-50 shadow-2xl ${
+      <div className={`sidebar-content fixed top-20 left-0 h-full bg-orange-50 transition-all duration-300 z-50 shadow-2xl ${
         isOpen ? "translate-x-0" : isMobile ? "-translate-x-[85%]" : ""
       }`}>
         <nav className="flex flex-col w-56 p-4 pr-12 space-y-4">
           <Link
             href="/dashboard"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <TbLayoutDashboardFilled className="mr-2" />
            Dashboard
           </Link>
           <Link
             href="/page2"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <SiGoogleclassroom className="mr-2" />
             Menu Item 2
           </Link>
           <Link
             href="/page3"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <FaCodepen className="mr-2" />
             Menu Item 3
           </Link>
           <Link
             href="/page4"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <FaComments className="mr-2" />
             Menu Item 4
           </Link>
           <Link
             href="/page5"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <MdNotifications className="mr-2" />
             Menu Item 5
           </Link>
           <Link
             href="/page6"
-            className="flex items-center text-gray-900 hover:text-indigo-600 text-lg p-2"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <FaQuestionCircle className="mr-2" />
             Menu Item 6
@@ -111,7 +111,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         {isMobile && (
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="absolute right-2 top-2 text-indigo-600 hover:text-indigo-700"
+            className="absolute right-2 top-2 text-orange-600 hover:text-orange-700"
           >
             {isOpen ? (
               <TbLayoutSidebarLeftCollapseFilled className="w-6 h-6" />
