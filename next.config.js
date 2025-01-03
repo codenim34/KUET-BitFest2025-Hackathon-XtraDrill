@@ -12,18 +12,18 @@ const nextConfig = {
       }
     ]
   },
-  experimental: {
-    serverActions: true,
-  },
   async rewrites() {
     return [
       {
-        source: "/api/webhooks/socket",
-        destination: "/api/webhooks/socket",
+        source: '/api/:path*',
+        destination: '/api/:path*',
       },
-      // Add other rewrite rules as needed
     ];
   },
+  // Disable edge runtime to avoid warnings
+  experimental: {
+    runtime: 'nodejs',
+  }
 };
 
 module.exports = nextConfig;
