@@ -17,6 +17,7 @@ import {
 } from "react-icons/tb";
 import { MdHistoryEdu, MdVoiceChat } from "react-icons/md";
 import { FaRegUserCircle } from "react-icons/fa";
+import { PiPaintBrushBold } from "react-icons/pi";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -72,7 +73,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <MdHistoryEdu className="mr-2" />
-           Stories
+            Stories
+          </Link>
+          <Link
+            href="/canvas"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
+          >
+            <PiPaintBrushBold className="mr-2" />
+            Canvas
           </Link>
           <Link
             href="/chat"
