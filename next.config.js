@@ -19,10 +19,6 @@ const nextConfig = {
         destination: '/api/:path*',
       },
     ];
-  },
-  // Disable edge runtime to avoid warnings
-  experimental: {
-    runtime: 'nodejs',
   }
 };
 
