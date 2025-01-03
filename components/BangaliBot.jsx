@@ -3,10 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { IoCopyOutline, IoBookOutline, IoSearchOutline, IoAddCircleOutline, IoTrashOutline } from "react-icons/io5";
-import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaPaperPlane } from 'react-icons/fa';
 import VoiceAssistant from './VoiceAssistant';
-import TextToSpeech from './TextToSpeech';
 
 export default function BangaliBot() {
   const { user } = useUser();
@@ -31,7 +29,6 @@ export default function BangaliBot() {
       fetchChatHistory();
       fetchStories();
     }
-    // Scroll to bottom when messages change
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [user, messages]);
 
@@ -93,8 +90,6 @@ export default function BangaliBot() {
         } else {
           setSelectedStory(null);
         }
-      } else {
-        console.error('Error loading chat:', fullChat.error);
       }
     } catch (error) {
       console.error('Error loading chat:', error);
@@ -117,9 +112,6 @@ export default function BangaliBot() {
           setMessages([]);
           setSelectedStory(null);
         }
-      } else {
-        const data = await response.json();
-        console.error('Error deleting chat:', data.error);
       }
     } catch (error) {
       console.error('Error deleting chat:', error);
@@ -141,15 +133,15 @@ export default function BangaliBot() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     if (!input.trim() || !user) return;
 
     const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
     setInput('');
+    setMessages(prev => [...prev, userMessage]);
 
     try {
+      setIsLoading(true);
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -170,11 +162,13 @@ export default function BangaliBot() {
           setCurrentChatId(data.chatId);
           fetchChatHistory();
         }
-      } else {
-        console.error('Error:', data.error);
       }
     } catch (error) {
       console.error('Error:', error);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'দুঃখিত, একটি ত্রুটি হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।'
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -260,16 +254,13 @@ export default function BangaliBot() {
               >
                 <p className="text-sm md:text-base">{message.content}</p>
                 {message.role === 'assistant' && (
-                  <>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(message.content)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
-                      title="Copy message"
-                    >
-                      <IoCopyOutline className="w-5 h-5" />
-                    </button>
-                    <TextToSpeech text={message.content} />
-                  </>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(message.content)}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Copy message"
+                  >
+                    <IoCopyOutline className="w-5 h-5" />
+                  </button>
                 )}
               </div>
               {message.role === 'user' && (

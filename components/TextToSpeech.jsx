@@ -1,59 +1,75 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { IoVolumeHighOutline, IoVolumeMuteOutline } from 'react-icons/io5';
 
 export default function TextToSpeech({ text }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const audioRef = useRef(new Audio());
 
-  const toggleSpeech = async () => {
+  const speakText = () => {
+    if (!window.speechSynthesis) {
+      console.error('Speech synthesis not supported');
+      return;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
     if (isSpeaking) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
       setIsSpeaking(false);
       return;
     }
 
-    try {
-      const response = await fetch('/api/text-to-speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
+    // Create new utterance
+    const utterance = new SpeechSynthesisUtterance(text);
 
-      if (!response.ok) {
-        throw new Error('Failed to get audio');
-      }
+    // Get available voices
+    const voices = window.speechSynthesis.getVoices();
+    console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      audioRef.current.src = audioUrl;
-      
-      audioRef.current.onplay = () => setIsSpeaking(true);
-      audioRef.current.onended = () => {
-        setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
-      };
-      audioRef.current.onerror = (error) => {
-        console.error('Audio playback error:', error);
-        setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
-      };
+    // Try to find a Bengali voice, fall back to any available voice
+    const voice = voices.find(v => v.lang === 'bn-IN') ||
+                 voices.find(v => v.lang === 'bn-BD') ||
+                 voices.find(v => v.lang.startsWith('bn')) ||
+                 voices.find(v => v.lang === 'en-IN') ||
+                 voices[0];
 
-      await audioRef.current.play();
-    } catch (error) {
-      console.error('Text-to-speech error:', error);
-      setIsSpeaking(false);
+    if (voice) {
+      console.log('Using voice:', voice.name, voice.lang);
+      utterance.voice = voice;
     }
+
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onstart = () => {
+      console.log('Speech started');
+      setIsSpeaking(true);
+    };
+
+    utterance.onend = () => {
+      console.log('Speech ended');
+      setIsSpeaking(false);
+    };
+
+    utterance.onerror = (event) => {
+      console.error('Speech error:', event);
+      setIsSpeaking(false);
+    };
+
+    // Start speaking
+    window.speechSynthesis.speak(utterance);
   };
+
+  // Force voice list to load
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+  }
 
   return (
     <button
-      onClick={toggleSpeech}
+      onClick={speakText}
       className={`
         p-2 rounded-full transition-all duration-200
         ${isSpeaking 
