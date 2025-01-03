@@ -1,7 +1,11 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
-  publicRoutes: ["/", "sign-in", "sign-up", "/api/webhooks(.*)"],
+  publicRoutes: [
+    "/",                    // Landing page       // Individual public story views
+    "/sign-in",           // Auth pages
+    "/sign-up"
+  ],
   ignoredRoutes: ["/api/webhooks(.*)"],
 });
 
