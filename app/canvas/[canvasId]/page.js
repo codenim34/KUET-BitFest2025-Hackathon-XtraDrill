@@ -8,6 +8,8 @@ import Link from "next/link";
 import { getCanvasById, updateCanvas } from "@/lib/actions/canvas.actions";
 import { useAuth } from "@clerk/nextjs";
 import { CopyButton } from "@/components/ui/copy-button";
+import { pusherClient } from "@/lib/utils/pusher";
+import { useParams } from "next/navigation";
 
 export default function CanvasPage({ params }) {
   const [content, setContent] = useState("");
@@ -15,7 +17,8 @@ export default function CanvasPage({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
-  const { canvasId } = params;
+  const [lastUpdateBy, setLastUpdateBy] = useState(null);
+  const { canvasId } = useParams();
   const { userId } = useAuth();
 
   useEffect(() => {
@@ -31,10 +34,28 @@ export default function CanvasPage({ params }) {
     fetchCanvas();
   }, [canvasId]);
 
+  // Subscribe to Pusher channel for real-time updates
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`canvas-${canvasId}`);
+    
+    channel.bind('canvas-updated', ({ content: newContent, title: newTitle, userId: updatedBy }) => {
+      // Only update if the change came from another user
+      if (updatedBy !== userId) {
+        setContent(newContent);
+        setTitle(newTitle);
+        setLastUpdateBy(updatedBy);
+      }
+    });
+
+    return () => {
+      pusherClient.unsubscribe(`canvas-${canvasId}`);
+    };
+  }, [canvasId, userId]);
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await updateCanvas(canvasId, { title, content });
+      await updateCanvas(canvasId, { title, content, userId });
     } catch (error) {
       console.error("Error saving canvas:", error);
     }
@@ -56,6 +77,8 @@ export default function CanvasPage({ params }) {
       
       if (data.translatedText) {
         setContent(data.translatedText);
+        // Save the translated content
+        await handleSave();
       } else {
         console.error('Translation failed:', data.error);
       }
@@ -64,6 +87,17 @@ export default function CanvasPage({ params }) {
     }
     setIsTranslating(false);
   };
+
+  // Debounce content changes before saving
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (content && !isLoading && !isSaving) {
+        handleSave();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [content]);
 
   if (isLoading) {
     return <div className="container mx-auto p-6">Loading...</div>;
@@ -92,6 +126,12 @@ export default function CanvasPage({ params }) {
           />
         </div>
       </div>
+
+      {lastUpdateBy && (
+        <div className="mb-4 text-sm text-gray-500">
+          Last updated by another user
+        </div>
+      )}
 
       <div className="mb-6">
         <input
