@@ -94,16 +94,18 @@ export default function StoriesPage() {
           <div
             key={story._id}
             onClick={() => router.push(`/stories/${story._id}`)}
-            className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer border border-gray-100"
+            className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer border border-gray-100 flex flex-col h-[220px]"
           >
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-3 text-gray-900 hover:text-orange-600 transition-colors">
-                {story.title}
-              </h2>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                {truncateContent(story.content)}
-              </p>
-              <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
+            <div className="p-6 flex flex-col h-full">
+              <div>
+                <h2 className="text-xl font-semibold mb-2 text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
+                  {story.title}
+                </h2>
+                <p className="text-gray-600 text-sm line-clamp-3">
+                  {truncateContent(story.content)}
+                </p>
+              </div>
+              <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100 mt-auto">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="w-4 h-4" />
