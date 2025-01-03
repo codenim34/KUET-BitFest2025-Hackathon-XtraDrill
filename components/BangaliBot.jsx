@@ -21,34 +21,23 @@ export default function BangaliBot() {
   const [chatHistory, setChatHistory] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
   const [isListening, setIsListening] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
+  const [isStoriesLoading, setIsStoriesLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    if (user) {
-      fetchChatHistory();
-      fetchStories();
-    }
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [user, messages]);
-
   const fetchChatHistory = async () => {
     try {
+      console.log('Fetching chat history...');
       const response = await fetch(`/api/chat-history?userId=${user.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat history');
+      }
       const data = await response.json();
+      console.log('Chat history loaded:', data.length, 'chats');
       setChatHistory(data);
     } catch (error) {
       console.error('Error fetching chat history:', error);
-    }
-  };
-
-  const fetchStories = async () => {
-    try {
-      const response = await fetch('/api/stories');
-      const data = await response.json();
-      setStories(data);
-    } catch (error) {
-      console.error('Error fetching stories:', error);
     }
   };
 
@@ -118,20 +107,6 @@ export default function BangaliBot() {
     }
   };
 
-  const handleStorySelect = (story) => {
-    setSelectedStory(story);
-    setIsStoryDropdownOpen(false);
-    setSearchQuery('');
-    setMessages(prev => [...prev, {
-      role: 'system',
-      content: `Selected story context: ${story.title}`
-    }]);
-  };
-
-  const handleVoiceInput = (transcript) => {
-    setInput(transcript);
-  };
-
   const handleSubmit = async (e) => {
     e?.preventDefault();
     if (!input.trim() || !user) return;
@@ -174,9 +149,66 @@ export default function BangaliBot() {
     }
   };
 
+  const handleVoiceInput = (transcript) => {
+    setInput(transcript);
+  };
+
+  const fetchStories = async () => {
+    try {
+      setIsStoriesLoading(true);
+      setFetchError(null);
+      
+      console.log('Fetching stories...');
+      const response = await fetch('/api/stories');
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch stories');
+      }
+      
+      const data = await response.json();
+      console.log('Stories response:', data);
+      
+      if (!Array.isArray(data)) {
+        console.error('Invalid stories response:', data);
+        throw new Error('Invalid response format');
+      }
+      
+      setStories(data);
+      console.log('Stories set:', data.length);
+    } catch (error) {
+      console.error('Error fetching stories:', error);
+      setFetchError(error.message);
+      setStories([]);
+    } finally {
+      setIsStoriesLoading(false);
+    }
+  };
+
+  const handleStorySelect = (story) => {
+    console.log('Selected story:', story);
+    setSelectedStory(story);
+    setIsStoryDropdownOpen(false);
+    setSearchQuery('');
+    setMessages(prev => [...prev, {
+      role: 'system',
+      content: `Selected story context: ${story.title}`
+    }]);
+  };
+
   const filteredStories = stories.filter(story =>
     story.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    if (user) {
+      fetchChatHistory();
+      if (isStoryDropdownOpen) {
+        fetchStories();
+      }
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [user, messages, isStoryDropdownOpen]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 flex h-[calc(100vh-10rem)] gap-4">
@@ -291,7 +323,12 @@ export default function BangaliBot() {
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
-                onClick={() => setIsStoryDropdownOpen(!isStoryDropdownOpen)}
+                onClick={() => {
+                  setIsStoryDropdownOpen(!isStoryDropdownOpen);
+                  if (!isStoryDropdownOpen) {
+                    fetchStories();
+                  }
+                }}
                 className={`p-3 rounded-full transition-colors ${
                   selectedStory 
                     ? 'text-orange-500 bg-orange-50' 
@@ -317,7 +354,26 @@ export default function BangaliBot() {
                     </div>
                   </div>
                   <div className="overflow-y-auto max-h-80">
-                    {filteredStories.length > 0 ? (
+                    {isStoriesLoading ? (
+                      <div className="p-4 text-center text-gray-500">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+                        <p className="mt-2">Loading stories...</p>
+                      </div>
+                    ) : fetchError ? (
+                      <div className="p-4 text-center text-red-500">
+                        <p>{fetchError}</p>
+                        <button
+                          onClick={fetchStories}
+                          className="mt-2 text-orange-500 hover:text-orange-600"
+                        >
+                          Try Again
+                        </button>
+                      </div>
+                    ) : stories.length === 0 ? (
+                      <div className="p-4 text-center text-gray-500">
+                        No stories available
+                      </div>
+                    ) : (
                       filteredStories.map((story) => (
                         <div
                           key={story._id}
@@ -329,10 +385,6 @@ export default function BangaliBot() {
                           <h3 className="font-medium text-gray-800">{story.title}</h3>
                         </div>
                       ))
-                    ) : (
-                      <div className="p-3 text-gray-500 text-center">
-                        No stories found
-                      </div>
                     )}
                   </div>
                 </div>
