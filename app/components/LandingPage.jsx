@@ -17,6 +17,12 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Image from 'next/image';
 import okkhorLogo from '../../public/okkhor-logo.png';
+import publish3d from '../../public/3d/publish.png';
+import read3d from '../../public/3d/read.png';
+import translate3d from '../../public/3d/translate.png';
+import chatbot3d from '../../public/3d/chatbot.png';
+import mydoc3d from '../../public/3d/mydoc.png';
+import FloatingImage from '../../components/ui/floating-image';
 
 function FeatureCard({ icon, title, description }) {
   return (
@@ -179,239 +185,110 @@ const LandingPage = () => {
         </nav>
 
         {/* Hero Section */}
-        <div className="pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-8">
+        <div className="relative pt-40 sm:pt-48 pb-28 sm:pb-32 px-4 sm:px-8 bg-gradient-to-r from-orange-400 to-white">
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent to-white opacity-100"></div>
+          <div className="relative max-w-7xl mx-auto flex items-center justify-between">
+            <div className="max-w-lg">
+              <h1 className="text-5xl font-bold text-gray-900">Where Bangla Stories Come Alive</h1>
+              <p className="mt-4 text-lg text-gray-700">Write, Share, and Connect in Your Language</p>
+              <button className="mt-8 bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all">Start Writing</button>
+            </div>
+            <div className="w-1/2">
+              {/* Placeholder for Image */}
+            </div>
+          </div>
+        </div>
+
+        {/* Publishing Section */}
+        <section className="py-16 bg-white h-full flex items-center justify-center">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold text-gray-900">Publish with Ease</h2>
+              <p className="mt-4 text-lg text-gray-700">Our platform offers seamless publishing tools to bring your stories to life.</p>
+            </div>
+            <div className="md:w-1/2 relative">
+              <FloatingImage src={publish3d} alt="Publishing" className="w-32 h-auto object-contain" />
+            </div>
+          </div>
+        </section>
+
+        {/* Explore Stories Section */}
+        <section className="py-16 bg-light-orange h-full flex items-center justify-center">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2 relative">
+              <FloatingImage src={read3d} alt="Explore Stories" className="w-32 h-auto object-contain" />
+            </div>
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold text-gray-900">Explore Stories</h2>
+              <p className="mt-4 text-lg text-gray-700">Discover a world of stories crafted by talented writers.</p>
+              {/* Story preview cards */}
+              <div className="story-cards mt-8">
+                {/* Add story cards here */}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Translation Feature Section */}
+        <section className="py-16 bg-white h-full flex items-center justify-center">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold text-gray-900">Translate Effortlessly</h2>
+              <p className="mt-4 text-lg text-gray-700">Experience seamless translation from Banglish to Bangla.</p>
+            </div>
+            <div className="md:w-1/2 relative">
+              <FloatingImage src={translate3d} alt="Translation" className="w-32 h-auto object-contain" />
+            </div>
+          </div>
+        </section>
+
+        {/* AI Chatbot Section */}
+        <section className="py-16 bg-light-orange h-full flex items-center justify-center">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2 relative">
+              <FloatingImage src={chatbot3d} alt="AI Chatbot" className="w-32 h-auto object-contain" />
+            </div>
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold text-gray-900">AI Chatbot Assistance</h2>
+              <p className="mt-4 text-lg text-gray-700">Interact with our AI chatbot for a seamless experience.</p>
+              {/* Chat interface preview */}
+              <div className="chat-interface mt-8">
+                {/* Add chat interface preview here */}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA Section */}
+        <section className="py-16 bg-white text-center">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center text-center md:text-left">
-              <div className="md:w-1/2">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                  Hero Text Here
-                  <span className="text-orange-600"> With Highlight</span>
-                </h1>
-                <p className="text-lg sm:text-xl text-gray-700 mb-10 max-w-3xl mx-auto md:mx-0 px-4">
-                  Your compelling description goes here. Make it engaging and impactful
-                  to capture your audience's attention.
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
-                  <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
-                    <button className="bg-orange-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-orange-700 transition-colors flex items-center justify-center w-full sm:w-auto">
-                      Start Learning <ChevronRight className="ml-3 h-6 w-6" />
-                    </button>
-                  </Link>
-                  <Link href="/watch-demo">
-                    <button className="border-2 border-gray-300 text-gray-700 px-10 py-4 rounded-full text-lg font-semibold hover:border-orange-600 hover:text-orange-600 transition-colors w-full sm:w-auto">
-                      Watch Demo
-                    </button>
-                  </Link>
-                </div>
-              </div>
-              <div className="md:w-1/2 mt-8 md:mt-0">
-                <img
-                  src="/hero.png"
-                  alt="hero"
-                  width={1000}
-                  height={1000}
-                  className="max-h-[70vh] object-contain object-center 2xl:max-h-[50vh]"
-                />
-              </div>
-            </div>
+            <h2 className="text-4xl font-bold text-gray-900">Join Our Community</h2>
+            <p className="mt-4 text-lg text-gray-700">Become a part of our vibrant community of writers and readers.</p>
+            <button className="mt-8 bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all">Join Now</button>
           </div>
-        </div>
-
-        {/* Statistics Section */}
-        <div className="bg-white py-12 sm:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-orange-600">100+</div>
-                <div className="text-lg text-gray-700">Statistic 1</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-orange-600">50K+</div>
-                <div className="text-lg text-gray-700">Statistic 2</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-orange-600">24/7</div>
-                <div className="text-lg text-gray-700">Statistic 3</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-orange-600">100%</div>
-                <div className="text-lg text-gray-700">Statistic 4</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Features Section */}
-        <div id="features" className="py-16 sm:py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 sm:mb-20">
-              Platform Features
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
-              <FeatureCard
-                icon={<Youtube />}
-                title="Feature 1"
-                description="Description of your first amazing feature goes here. Highlight its key benefits."
-              />
-              <FeatureCard
-                icon={<Code2 />}
-                title="Feature 2"
-                description="Description of your second amazing feature goes here. Highlight its key benefits."
-              />
-              <FeatureCard
-                icon={<MessageSquare />}
-                title="Feature 3"
-                description="Description of your third amazing feature goes here. Highlight its key benefits."
-              />
-              <FeatureCard
-                icon={<Bot />}
-                title="Feature 4"
-                description="Description of your fourth amazing feature goes here. Highlight its key benefits."
-              />
-              <FeatureCard
-                icon={<Users />}
-                title="Feature 5"
-                description="Description of your fifth amazing feature goes here. Highlight its key benefits."
-              />
-              <FeatureCard
-                icon={<Globe2 />}
-                title="Feature 6"
-                description="Description of your sixth amazing feature goes here. Highlight its key benefits."
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* SDGs Section */}
-        <div id="sdgs" className="py-16 sm:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 sm:mb-20">
-              Supporting UN Sustainable Development Goals
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16">
-              <SDGCard
-                icon={<GraduationCap />}
-                number="1"
-                title="Impact Area 1"
-                description="Describe how your project makes an impact in this area."
-              />
-              <SDGCard
-                icon={<Scale />}
-                number="2"
-                title="Impact Area 2"
-                description="Describe how your project makes an impact in this area."
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-orange-600 py-20">
-          <div className="max-w-7xl mx-auto px-8 text-center">
-            <h2 className="text-4xl font-bold text-white mb-8">
-              Your Call to Action Here
-            </h2>
-            <p className="text-xl text-orange-100 mb-12 max-w-3xl mx-auto">
-              Compelling reason why users should take action now.
-            </p>
-            <Link href="/join">
-              <button className="bg-white text-orange-600 px-12 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
-                Call To Action Button
-              </button>
-            </Link>
-          </div>
-        </div>
+        </section>
 
         {/* Footer */}
-        <footer className="bg-gray-900 text-gray-400 py-12 sm:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
-              <div>
-                <h3 className="text-white font-semibold text-xl mb-6">
-                  Menu 1
-                </h3>
-                <ul className="space-y-3">
-                  <li>
-                    <Link href="/link1" className="hover:text-white text-lg">
-                      Link 1
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link2" className="hover:text-white text-lg">
-                      Link 2
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link3" className="hover:text-white text-lg">
-                      Link 3
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-white font-semibold text-xl mb-6">
-                  Menu 2
-                </h3>
-                <ul className="space-y-3">
-                  <li>
-                    <Link href="/link1" className="hover:text-white text-lg">
-                      Link 1
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link2" className="hover:text-white text-lg">
-                      Link 2
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-white font-semibold text-xl mb-6">
-                  Menu 3
-                </h3>
-                <ul className="space-y-3">
-                  <li>
-                    <Link href="/link1" className="hover:text-white text-lg">
-                      Link 1
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link2" className="hover:text-white text-lg">
-                      Link 2
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link3" className="hover:text-white text-lg">
-                      Link 3
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-white font-semibold text-xl mb-6">Menu 4</h3>
-                <ul className="space-y-3">
-                  <li>
-                    <Link href="/link1" className="hover:text-white text-lg">
-                      Link 1
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link2" className="hover:text-white text-lg">
-                      Link 2
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/link3" className="hover:text-white text-lg">
-                      Link 3
-                    </Link>
-                  </li>
-                </ul>
+        <footer className="py-8 bg-gray-900 text-white">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between">
+            <div className="mb-4 md:mb-0">
+              <h3 className="text-lg font-bold">Stay Connected</h3>
+              <div className="social-links mt-2">
+                {/* Add social media links here */}
               </div>
             </div>
-            <div className="border-t border-gray-800 mt-16 pt-8 text-center">
-              <p className="text-lg">
-                &copy; {new Date().getFullYear()} Your Company Name. All rights reserved.
-              </p>
+            <div className="mb-4 md:mb-0">
+              <h3 className="text-lg font-bold">Newsletter</h3>
+              <form className="mt-2">
+                <input type="email" placeholder="Your email" className="px-4 py-2 rounded-full text-gray-900" />
+                <button type="submit" className="ml-2 bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-all">Subscribe</button>
+              </form>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold">Quick Links</h3>
+              <ul className="mt-2">
+                {/* Add quick links here */}
+              </ul>
             </div>
           </div>
         </footer>
