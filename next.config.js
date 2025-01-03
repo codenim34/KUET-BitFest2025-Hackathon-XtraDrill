@@ -1,6 +1,19 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['img.clerk.com', 'images.clerk.dev'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+      }
+    ]
+  },
+  experimental: {
+    serverActions: true,
   },
   async rewrites() {
     return [
