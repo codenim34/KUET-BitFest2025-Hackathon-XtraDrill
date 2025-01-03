@@ -297,7 +297,13 @@ export default function StoryPage({ params }) {
           </div>
           <div className="flex items-center gap-2">
             <User2 className="w-4 h-4" />
-            <span>{story.authorName} {isAuthor && "(You)"}</span>
+            {story.authorUsername ? (
+              <Link href={`/${story.authorUsername}`} className="hover:text-orange-600 transition-colors">
+                <span>{story.authorName} {isAuthor && "(You)"}</span>
+              </Link>
+            ) : (
+              <span>{story.authorName} {isAuthor && "(You)"}</span>
+            )}
           </div>
         </div>
       </div>
