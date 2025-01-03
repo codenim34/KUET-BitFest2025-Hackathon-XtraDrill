@@ -15,13 +15,13 @@ const kanit = Kanit({
 });
 
 export const metadata = {
-  title: "Inherit",
-  description: "Inherit: A Unified Learning & Coding Platform",
+  title: "অক্ষর",
+  description: "অক্ষর: KUET BitFest 2025 Hackathon Project | Xtra Drill",
   openGraph: {
     type: "website",
-    url: "https://inherit-xtradrill.vercel.app",
-    title: "Inherit",
-    description: "Inherit: A Unified Learning & Coding Platform",
+    url: "https://kuet-bit-fest2025-hackathon-xtra-drill.vercel.app/",
+    title: "অক্ষর",
+    description: "অক্ষর: KUET BitFest 2025 Hackathon Project | Xtra Drill",
     image:
       "https://raw.githubusercontent.com/takitajwar17/inherit/refs/heads/main/public/inherit.png",
   },
