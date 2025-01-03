@@ -69,6 +69,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       }`}>
         <nav className="flex flex-col w-56 p-4 pr-12 space-y-4">
           <Link
+            href="/dashboard"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
+          >
+            <TbLayoutDashboardFilled className="mr-2" />
+            Dashboard
+          </Link>
+          <Link
             href="/stories"
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
@@ -83,7 +90,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             Canvas
           </Link>
           <Link
-            href="/chat"
+            href="/bengali-chat"
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <MdVoiceChat className="mr-2" />
