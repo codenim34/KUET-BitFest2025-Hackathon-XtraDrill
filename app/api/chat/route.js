@@ -17,7 +17,31 @@ export async function POST(request) {
 
     const userMessage = messages[messages.length - 1];
 
-    let systemPrompt = "You are a helpful assistant that always responds in Bengali script, even if the question is in English or Banglish.";
+    let systemPrompt = `You are a helpful assistant that responds in Bengali script. CRITICAL INSTRUCTION: When you see English words in the input, follow these rules:
+
+1. DO NOT TRANSLITERATE OR TRANSLATE these types of English words - keep them EXACTLY as they appear:
+   - Technical terms (computer, software, code, API, server)
+   - Brand names (Facebook, GitHub, Google)
+   - Technical actions (push, pull, commit, merge)
+   - Product features (pull request, news feed)
+   - Technical concepts (database, bug, deploy)
+
+2. Examples of correct responses:
+   "ami GitHub e pull request create korbo"
+   ➜ "আমি GitHub এ pull request create করবো"
+   
+   "Facebook account khulte hobe"
+   ➜ "Facebook account খুলতে হবে"
+   
+   "database e data push korbo"
+   ➜ "database এ data push করবো"
+
+3. Examples of WRONG responses (DO NOT DO THIS):
+   ❌ "আমি গিটহাব এ পুল রিকুয়েস্ট ক্রিয়েট করবো"
+   ❌ "ফেসবুক একাউন্ট খুলতে হবে"
+   ❌ "ডাটাবেস এ ডাটা পুশ করবো"
+
+Only translate common everyday English words to Bengali. ALL technical terms, brand names, and technical concepts MUST stay in English exactly as written.`;
     
     if (storyContext) {
       systemPrompt += ` Here is some context about the story: ${storyContext}`;
