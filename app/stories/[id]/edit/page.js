@@ -3,15 +3,17 @@
 import { useState, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 import { getStoryById, updateStory } from "@/lib/actions/story.actions";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Lock, Globe } from "lucide-react";
 import Link from "next/link";
 
 export default function EditStory({ params }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,6 +33,7 @@ export default function EditStory({ params }) {
           }
           setTitle(data.title);
           setContent(data.content);
+          setIsPrivate(data.isPrivate || false);
         } else {
           setError(error);
         }
@@ -52,6 +55,7 @@ export default function EditStory({ params }) {
       const result = await updateStory(params.id, {
         title,
         content,
+        isPrivate,
       });
 
       if (result.success) {
@@ -153,6 +157,30 @@ export default function EditStory({ params }) {
               onEditorChange={(newContent) => setContent(newContent)}
             />
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={isPrivate}
+            onCheckedChange={setIsPrivate}
+            id="visibility"
+          />
+          <label 
+            htmlFor="visibility" 
+            className="text-sm font-medium text-gray-700 select-none cursor-pointer flex items-center gap-2"
+          >
+            {isPrivate ? (
+              <>
+                <Lock className="w-4 h-4" />
+                Private Story
+              </>
+            ) : (
+              <>
+                <Globe className="w-4 h-4" />
+                Public Story
+              </>
+            )}
+          </label>
         </div>
 
         <div className="flex gap-4 pt-4">
