@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { IoCopyOutline, IoBookOutline, IoSearchOutline } from "react-icons/io5";
-import { MdHistory, MdKeyboardArrowRight } from "react-icons/md";
+import { IoCopyOutline, IoBookOutline, IoSearchOutline, IoAddCircleOutline, IoTrashOutline } from "react-icons/io5";
+import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaPaperPlane } from 'react-icons/fa';
 
 export default function BangaliBot() {
@@ -14,25 +14,33 @@ export default function BangaliBot() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isChatHistoryVisible, setIsChatHistoryVisible] = useState(true);
   const [stories, setStories] = useState([]);
   const [selectedStory, setSelectedStory] = useState(null);
   const [isStoryDropdownOpen, setIsStoryDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
   const messagesEndRef = useRef(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    fetchStories();
-    // Close dropdown when clicking outside
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsStoryDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (user) {
+      fetchChatHistory();
+      fetchStories();
+    }
+    // Scroll to bottom when messages change
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [user, messages]);
+
+  const fetchChatHistory = async () => {
+    try {
+      const response = await fetch(`/api/chat-history?userId=${user.id}`);
+      const data = await response.json();
+      setChatHistory(data);
+    } catch (error) {
+      console.error('Error fetching chat history:', error);
+    }
+  };
 
   const fetchStories = async () => {
     try {
@@ -44,8 +52,77 @@ export default function BangaliBot() {
     }
   };
 
-  const toggleChatHistory = () => {
-    setIsChatHistoryVisible(!isChatHistoryVisible);
+  const startNewChat = async () => {
+    try {
+      const response = await fetch('/api/chat-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      });
+      const newChat = await response.json();
+      setChatHistory(prev => [newChat, ...prev]);
+      setCurrentChatId(newChat._id);
+      setMessages([]);
+      setSelectedStory(null);
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+    }
+  };
+
+  const loadChat = async (chat) => {
+    try {
+      const response = await fetch(`/api/chat-history/${chat._id}`);
+      const fullChat = await response.json();
+      
+      if (response.ok) {
+        setCurrentChatId(fullChat._id);
+        setMessages(fullChat.messages);
+        if (fullChat.storyContext) {
+          setSelectedStory({
+            _id: fullChat.storyContext.storyId,
+            title: fullChat.storyContext.title,
+            content: fullChat.storyContext.content
+          });
+        } else {
+          setSelectedStory(null);
+        }
+      } else {
+        console.error('Error loading chat:', fullChat.error);
+      }
+    } catch (error) {
+      console.error('Error loading chat:', error);
+    }
+  };
+
+  const deleteChat = async (e, chatId) => {
+    e.stopPropagation(); // Prevent chat from being loaded when clicking delete
+    
+    try {
+      const response = await fetch(`/api/chat-history/${chatId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove chat from local state
+        setChatHistory(prev => prev.filter(chat => chat._id !== chatId));
+        
+        // If the deleted chat was the current chat, clear the current chat
+        if (currentChatId === chatId) {
+          setCurrentChatId(null);
+          setMessages([]);
+          setSelectedStory(null);
+        }
+      } else {
+        const data = await response.json();
+        console.error('Error deleting chat:', data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
   };
 
   const handleStorySelect = (story) => {
@@ -58,13 +135,9 @@ export default function BangaliBot() {
     }]);
   };
 
-  const filteredStories = stories.filter(story =>
-    story.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
 
     const userMessage = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
@@ -79,13 +152,19 @@ export default function BangaliBot() {
         },
         body: JSON.stringify({
           messages: [...messages, userMessage],
-          storyContext: selectedStory ? selectedStory.content : null,
+          storyContext: selectedStory,
+          chatId: currentChatId,
+          userId: user.id,
         }),
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+        if (!currentChatId) {
+          setCurrentChatId(data.chatId);
+          fetchChatHistory();
+        }
       } else {
         console.error('Error:', data.error);
       }
@@ -96,9 +175,60 @@ export default function BangaliBot() {
     }
   };
 
+  const filteredStories = stories.filter(story =>
+    story.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="max-w-7xl mx-auto p-4 flex h-[calc(100vh-10rem)]">
-      <div className="flex-1 mr-4 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+    <div className="max-w-7xl mx-auto p-4 flex h-[calc(100vh-10rem)] gap-4">
+      {/* Sidebar */}
+      <div className="w-64 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+        <div className="p-4">
+          <button
+            onClick={startNewChat}
+            className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            <IoAddCircleOutline className="w-5 h-5" />
+            <span>New Chat</span>
+          </button>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-2">
+          {chatHistory.map((chat) => (
+            <div
+              key={chat._id}
+              onClick={() => loadChat(chat)}
+              className={`p-3 cursor-pointer rounded-lg transition-colors mb-2 ${
+                currentChatId === chat._id 
+                  ? 'bg-orange-100 text-orange-700'
+                  : 'hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-start justify-between group">
+                <h3 className="font-medium text-sm truncate flex-1">
+                  {chat.title}
+                </h3>
+                <button 
+                  onClick={(e) => deleteChat(e, chat._id)}
+                  className="text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Delete chat"
+                >
+                  <IoTrashOutline className="w-4 h-4" />
+                </button>
+              </div>
+              {chat.storyContext && (
+                <div className="mt-1 text-xs text-orange-600 flex items-center gap-1">
+                  <IoBookOutline className="w-3 h-3" />
+                  {chat.storyContext.title}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Chat Area */}
+      <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((message, index) => (
             <div
@@ -156,6 +286,7 @@ export default function BangaliBot() {
           )}
           <div ref={messagesEndRef} />
         </div>
+
         <form onSubmit={handleSubmit} className="p-4 bg-gray-50 border-t border-gray-200">
           <div className="flex items-center space-x-2">
             <div className="relative" ref={dropdownRef}>
@@ -172,7 +303,6 @@ export default function BangaliBot() {
                 <IoBookOutline className="w-6 h-6" />
               </button>
 
-              {/* Story Dropdown */}
               {isStoryDropdownOpen && (
                 <div className="absolute bottom-full left-0 mb-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden">
                   <div className="p-2 border-b sticky top-0 bg-white">
@@ -233,24 +363,6 @@ export default function BangaliBot() {
             </div>
           )}
         </form>
-      </div>
-
-      {/* Chat History Sidebar */}
-      <div className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${isChatHistoryVisible ? 'w-80' : 'w-12'}`}>
-        <div className="p-4 h-full flex flex-col">
-          <button 
-            onClick={toggleChatHistory} 
-            className="text-gray-500 hover:text-gray-700 transition-colors mb-4 self-start"
-          >
-            {isChatHistoryVisible ? <MdKeyboardArrowRight className="w-6 h-6" /> : <MdHistory className="w-6 h-6" />}
-          </button>
-          {isChatHistoryVisible && selectedStory && (
-            <div className="mb-4 p-3 bg-orange-50 rounded-lg">
-              <h3 className="font-medium text-orange-600">Current Story Context:</h3>
-              <p className="text-sm text-gray-600">{selectedStory.title}</p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
