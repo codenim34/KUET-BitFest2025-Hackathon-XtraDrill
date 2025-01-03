@@ -3,10 +3,11 @@ import { fetchUserByUsername } from "@/lib/actions/user.actions";
 import { getUserStories, getLikedStories } from "@/lib/actions/story.actions";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, User2, Heart } from "lucide-react";
+import { CalendarDays, User2, Heart, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { CopyButton } from "@/components/ui/copy-button";
 
 const truncateContent = (content) => {
   const plainText = content.replace(/<[^>]+>/g, '');
@@ -88,7 +89,16 @@ export default async function UserProfilePage({ params }) {
           <h1 className="text-2xl font-bold text-gray-900">
             {profileUser.firstName} {profileUser.lastName}
           </h1>
-          <p className="text-gray-500">@{profileUser.userName}</p>
+          
+          <div className="mt-4 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg">
+            <LinkIcon className="w-4 h-4 text-gray-400" />
+            <span className="text-gray-600 select-all">
+              {profileUser.userName}
+            </span>
+            <CopyButton 
+              text={`${process.env.NEXT_PUBLIC_APP_URL}/${profileUser.userName}`}
+            />
+          </div>
         </div>
 
         <Tabs defaultValue="public" className="w-full">

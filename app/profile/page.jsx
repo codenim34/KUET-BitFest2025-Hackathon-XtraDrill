@@ -86,14 +86,24 @@ export default async function ProfilePage() {
           </h1>
           <p className="text-gray-500">{user.emailAddresses[0].emailAddress}</p>
           
-          <div className="mt-4 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg">
-            <LinkIcon className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-600 select-all">
-              {userInfo.userName}
-            </span>
-            <CopyButton 
-              text={userInfo.userName}
-            />
+          <div className="mt-4 flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg">
+              <LinkIcon className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-600 select-all">
+                {userInfo.userName}
+              </span>
+              <CopyButton 
+                text={`${process.env.NEXT_PUBLIC_APP_URL}/${userInfo.userName}`}
+              />
+            </div>
+            
+            <Link 
+              href={`/${userInfo.userName}`}
+              className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors px-4 py-2 bg-orange-50 rounded-lg"
+            >
+              <User2 className="w-4 h-4" />
+              View Public Profile
+            </Link>
           </div>
         </div>
 
