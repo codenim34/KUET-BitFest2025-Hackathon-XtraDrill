@@ -24,12 +24,12 @@ export function CopyButton({ text, className = '' }) {
       {copied ? (
         <>
           <Check className="w-4 h-4" />
-          <span>Copied!</span>
+          <span>Link Copied!</span>
         </>
       ) : (
         <>
           <Copy className="w-4 h-4" />
-          <span>Copy</span>
+          <span>Share Link</span>
         </>
       )}
     </button>
