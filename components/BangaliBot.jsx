@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { IoCopyOutline } from "react-icons/io5";
+import { IoCopyOutline, IoBookOutline, IoSearchOutline } from "react-icons/io5";
 import { MdHistory, MdKeyboardArrowRight } from "react-icons/md";
-import { FaAngleLeft, FaAngleRight, FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane } from 'react-icons/fa';
 
 export default function BangaliBot() {
   const { user } = useUser();
@@ -15,15 +15,52 @@ export default function BangaliBot() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isChatHistoryVisible, setIsChatHistoryVisible] = useState(true);
+  const [stories, setStories] = useState([]);
+  const [selectedStory, setSelectedStory] = useState(null);
+  const [isStoryDropdownOpen, setIsStoryDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef(null);
+  const dropdownRef = useRef(null);
 
-  const chatHistory = [
-    
-  ];
+  useEffect(() => {
+    fetchStories();
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsStoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const fetchStories = async () => {
+    try {
+      const response = await fetch('/api/stories');
+      const data = await response.json();
+      setStories(data);
+    } catch (error) {
+      console.error('Error fetching stories:', error);
+    }
+  };
 
   const toggleChatHistory = () => {
     setIsChatHistoryVisible(!isChatHistoryVisible);
   };
+
+  const handleStorySelect = (story) => {
+    setSelectedStory(story);
+    setIsStoryDropdownOpen(false);
+    setSearchQuery('');
+    setMessages(prev => [...prev, {
+      role: 'system',
+      content: `Selected story context: ${story.title}`
+    }]);
+  };
+
+  const filteredStories = stories.filter(story =>
+    story.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +79,7 @@ export default function BangaliBot() {
         },
         body: JSON.stringify({
           messages: [...messages, userMessage],
+          storyContext: selectedStory ? selectedStory.content : null,
         }),
       });
 
@@ -77,9 +115,11 @@ export default function BangaliBot() {
                 />
               )}
               <div
-                className={`max-w-[80%] rounded-2xl p-4 shadow-md ${
+                className={`max-w-[80%] rounded-2xl p-4 shadow-md relative ${
                   message.role === 'user'
                     ? 'bg-orange-500 text-white'
+                    : message.role === 'system'
+                    ? 'bg-gray-200 text-gray-800'
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
@@ -118,6 +158,58 @@ export default function BangaliBot() {
         </div>
         <form onSubmit={handleSubmit} className="p-4 bg-gray-50 border-t border-gray-200">
           <div className="flex items-center space-x-2">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsStoryDropdownOpen(!isStoryDropdownOpen)}
+                className={`p-3 rounded-full transition-colors ${
+                  selectedStory 
+                    ? 'text-orange-500 bg-orange-50' 
+                    : 'text-gray-500 hover:text-orange-500'
+                }`}
+                title="Select Story Context"
+              >
+                <IoBookOutline className="w-6 h-6" />
+              </button>
+
+              {/* Story Dropdown */}
+              {isStoryDropdownOpen && (
+                <div className="absolute bottom-full left-0 mb-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden">
+                  <div className="p-2 border-b sticky top-0 bg-white">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search stories..."
+                        className="w-full pl-8 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <IoSearchOutline className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    </div>
+                  </div>
+                  <div className="overflow-y-auto max-h-80">
+                    {filteredStories.length > 0 ? (
+                      filteredStories.map((story) => (
+                        <div
+                          key={story._id}
+                          onClick={() => handleStorySelect(story)}
+                          className={`p-3 cursor-pointer hover:bg-orange-50 transition-colors ${
+                            selectedStory?._id === story._id ? 'bg-orange-100' : ''
+                          }`}
+                        >
+                          <h3 className="font-medium text-gray-800">{story.title}</h3>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-3 text-gray-500 text-center">
+                        No stories found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <input
               type="text"
               value={input}
@@ -133,8 +225,17 @@ export default function BangaliBot() {
               <FaPaperPlane className="w-5 h-5" />
             </button>
           </div>
+          {selectedStory && (
+            <div className="mt-2 px-14">
+              <p className="text-xs text-gray-500">
+                Current context: {selectedStory.title}
+              </p>
+            </div>
+          )}
         </form>
       </div>
+
+      {/* Chat History Sidebar */}
       <div className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${isChatHistoryVisible ? 'w-80' : 'w-12'}`}>
         <div className="p-4 h-full flex flex-col">
           <button 
@@ -143,23 +244,10 @@ export default function BangaliBot() {
           >
             {isChatHistoryVisible ? <MdKeyboardArrowRight className="w-6 h-6" /> : <MdHistory className="w-6 h-6" />}
           </button>
-          {isChatHistoryVisible && (
-            <div className="overflow-y-auto flex-1">
-              {chatHistory.map((section, index) => (
-                <div key={index} className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-500 mb-2">{section.date}</h3>
-                  <ul className="space-y-2">
-                    {section.messages.map((message, idx) => (
-                      <li 
-                        key={idx} 
-                        className="text-sm bg-gray-50 hover:bg-gray-100 p-2 rounded-lg cursor-pointer transition-colors"
-                      >
-                        {message}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+          {isChatHistoryVisible && selectedStory && (
+            <div className="mb-4 p-3 bg-orange-50 rounded-lg">
+              <h3 className="font-medium text-orange-600">Current Story Context:</h3>
+              <p className="text-sm text-gray-600">{selectedStory.title}</p>
             </div>
           )}
         </div>
@@ -167,4 +255,3 @@ export default function BangaliBot() {
     </div>
   );
 }
-
