@@ -30,7 +30,7 @@ export default function CanvasPage() {
   }, [userId]);
 
   const handleCreateCanvas = async () => {
-    if (!user) return;
+    if (!user || !userId) return;
 
     const authorName = user.fullName || user.firstName || user.username || user.emailAddresses[0]?.emailAddress || "Anonymous User";
     const _id = new mongoose.Types.ObjectId();
@@ -56,7 +56,13 @@ export default function CanvasPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Canvases</h1>
-        <Button onClick={handleCreateCanvas}>Create New Canvas</Button>
+        <Button 
+          onClick={handleCreateCanvas}
+          id="createCanvasButton" // Add an ID for easy reference
+          data-create-canvas="true" // Add a data attribute for easier selection
+        >
+          Create New Canvas
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
