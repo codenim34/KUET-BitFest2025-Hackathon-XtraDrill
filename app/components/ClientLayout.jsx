@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react"; 
 import Header from "./Header"; 
 import Sidebar from "./Sidebar";
+import VoiceAgent from "./VoiceAgent";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
@@ -51,6 +52,9 @@ export default function ClientLayout({ children }) {
           <div className="w-full">{children}</div>
         </div>
       </main>
+
+      {/* Voice Agent - shown on all pages except auth pages */}
+      {!isExcludedPath && <VoiceAgent />}
     </>
   );
 }

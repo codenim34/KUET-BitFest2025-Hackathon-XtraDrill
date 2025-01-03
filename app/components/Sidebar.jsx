@@ -1,3 +1,13 @@
+Module not found: Can't resolve '@/components/Sidebar'
+  2 |
+  3 | import { usePathname } from 'next/navigation';
+> 4 | import Sidebar from '@/components/Sidebar';
+    | ^
+  5 | import VoiceNavigator from '@/components/VoiceNavigator';
+  6 |
+  7 | export default function ClientLayout({ children }) {
+
+https://nextjs.org/docs/messages/module-not-found
 "use client";
 
 import Link from "next/link";
