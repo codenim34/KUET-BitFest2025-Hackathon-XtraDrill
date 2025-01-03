@@ -6,7 +6,8 @@ import { getStories } from "@/lib/actions/story.actions";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, User2 } from "lucide-react";
+import { CalendarDays, User2, Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function StoriesPage() {
   const { user } = useUser();
@@ -18,13 +19,52 @@ export default function StoriesPage() {
     const fetchStories = async () => {
       const { success, data, error } = await getStories();
       if (success) {
-        setStories(data);
+        // Initialize love state for each story
+        const storiesWithLoveState = data.map(story => ({
+          ...story,
+          isLoved: story.loves?.includes(user?.id),
+          loveCount: story.loves?.length || 0
+        }));
+        setStories(storiesWithLoveState);
       } else {
         setError(error);
       }
     };
     fetchStories();
-  }, []);
+  }, [user]);
+
+  const handleLove = async (e, storyId) => {
+    e.stopPropagation(); // Prevent navigation when clicking love button
+    
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/stories/love', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ storyId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to toggle love');
+      }
+
+      if (result.success) {
+        setStories(stories.map(story => 
+          story._id === storyId ? result.data : story
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling love:', error);
+    }
+  };
 
   if (error) {
     return <div className="text-red-500">Error: {error}</div>;
@@ -64,9 +104,26 @@ export default function StoriesPage() {
                 {truncateContent(story.content)}
               </p>
               <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="w-4 h-4" />
-                  <span>{new Date(story.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="w-4 h-4" />
+                    <span>{new Date(story.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <button 
+                    onClick={(e) => handleLove(e, story._id)}
+                    className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                    title={story.isLoved ? "Unlike" : "Like"}
+                  >
+                    <Heart 
+                      className={cn(
+                        "w-4 h-4 transition-colors", 
+                        story.isLoved ? "fill-red-500 text-red-500" : ""
+                      )} 
+                    />
+                    <span className="text-sm">
+                      {story.loveCount || 0}
+                    </span>
+                  </button>
                 </div>
                 <div className="flex items-center gap-2">
                   <User2 className="w-4 h-4" />

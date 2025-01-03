@@ -1,4 +1,7 @@
 const nextConfig = {
+  images: {
+    domains: ['img.clerk.com', 'images.clerk.dev'],
+  },
   async rewrites() {
     return [
       {
