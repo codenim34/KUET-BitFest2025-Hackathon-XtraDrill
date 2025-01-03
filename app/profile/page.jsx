@@ -92,9 +92,16 @@ export default async function ProfilePage() {
               {userInfo.userName}
             </span>
             <CopyButton 
-              text={userInfo.userName}
+              text={`${process.env.NEXT_PUBLIC_APP_URL}/${userInfo.userName}`}
             />
           </div>
+          <Link 
+            href={`/${userInfo.userName}`}
+            className="mt-2 inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors"
+          >
+            <User2 className="w-4 h-4" />
+            View Public Profile
+          </Link>
         </div>
 
         <Tabs defaultValue="public" className="w-full">
