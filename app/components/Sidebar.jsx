@@ -15,6 +15,8 @@ import {
   TbLayoutSidebarLeftCollapseFilled,
   TbLayoutSidebarLeftExpandFilled,
 } from "react-icons/tb";
+import { MdHistoryEdu, MdVoiceChat } from "react-icons/md";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -66,47 +68,27 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       }`}>
         <nav className="flex flex-col w-56 p-4 pr-12 space-y-4">
           <Link
-            href="/dashboard"
+            href="/stories"
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
-            <TbLayoutDashboardFilled className="mr-2" />
-           Dashboard
+            <MdHistoryEdu className="mr-2" />
+           Stories
           </Link>
           <Link
-            href="/page2"
+            href="/chat"
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
-            <SiGoogleclassroom className="mr-2" />
-            Menu Item 2
+            <MdVoiceChat className="mr-2" />
+            Bangali Bot
           </Link>
           <Link
-            href="/page3"
+            href="/profile"
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
-            <FaCodepen className="mr-2" />
-            Menu Item 3
+            <FaRegUserCircle className="mr-2" />
+            Profile
           </Link>
-          <Link
-            href="/page4"
-            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
-          >
-            <FaComments className="mr-2" />
-            Menu Item 4
-          </Link>
-          <Link
-            href="/page5"
-            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
-          >
-            <MdNotifications className="mr-2" />
-            Menu Item 5
-          </Link>
-          <Link
-            href="/page6"
-            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
-          >
-            <FaQuestionCircle className="mr-2" />
-            Menu Item 6
-          </Link>
+          
         </nav>
         {isMobile && (
           <button
