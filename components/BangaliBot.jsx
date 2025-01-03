@@ -5,6 +5,8 @@ import { useUser } from '@clerk/clerk-react';
 import { IoCopyOutline, IoBookOutline, IoSearchOutline, IoAddCircleOutline, IoTrashOutline } from "react-icons/io5";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaPaperPlane } from 'react-icons/fa';
+import VoiceAssistant from './VoiceAssistant';
+import TextToSpeech from './TextToSpeech';
 
 export default function BangaliBot() {
   const { user } = useUser();
@@ -20,6 +22,7 @@ export default function BangaliBot() {
   const [searchQuery, setSearchQuery] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -99,7 +102,7 @@ export default function BangaliBot() {
   };
 
   const deleteChat = async (e, chatId) => {
-    e.stopPropagation(); // Prevent chat from being loaded when clicking delete
+    e.stopPropagation();
     
     try {
       const response = await fetch(`/api/chat-history/${chatId}`, {
@@ -107,10 +110,8 @@ export default function BangaliBot() {
       });
 
       if (response.ok) {
-        // Remove chat from local state
         setChatHistory(prev => prev.filter(chat => chat._id !== chatId));
         
-        // If the deleted chat was the current chat, clear the current chat
         if (currentChatId === chatId) {
           setCurrentChatId(null);
           setMessages([]);
@@ -133,6 +134,10 @@ export default function BangaliBot() {
       role: 'system',
       content: `Selected story context: ${story.title}`
     }]);
+  };
+
+  const handleVoiceInput = (transcript) => {
+    setInput(transcript);
   };
 
   const handleSubmit = async (e) => {
@@ -255,13 +260,16 @@ export default function BangaliBot() {
               >
                 <p className="text-sm md:text-base">{message.content}</p>
                 {message.role === 'assistant' && (
-                  <button
-                    onClick={() => navigator.clipboard.writeText(message.content)}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
-                    title="Copy message"
-                  >
-                    <IoCopyOutline className="w-5 h-5" />
-                  </button>
+                  <>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(message.content)}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Copy message"
+                    >
+                      <IoCopyOutline className="w-5 h-5" />
+                    </button>
+                    <TextToSpeech text={message.content} />
+                  </>
                 )}
               </div>
               {message.role === 'user' && (
@@ -340,11 +348,17 @@ export default function BangaliBot() {
               )}
             </div>
 
+            <VoiceAssistant
+              onTranscript={handleVoiceInput}
+              isListening={isListening}
+              setIsListening={setIsListening}
+            />
+
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message in Banglish or Bengali..."
+              placeholder={isListening ? 'Listening...' : 'Type your message in Banglish or Bengali...'}
               className="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-shadow"
             />
             <button
