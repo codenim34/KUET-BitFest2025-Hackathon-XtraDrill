@@ -21,7 +21,7 @@ import publish3d from '../../public/3d/publish.png';
 import read3d from '../../public/3d/read.png';
 import translate3d from '../../public/3d/translate.png';
 import chatbot3d from '../../public/3d/chatbot.png';
-import mydoc3d from '../../public/3d/mydoc.png';
+import heroImage from '../../public/hero-image.png';
 import FloatingImage from '../../components/ui/floating-image';
 
 function FeatureCard({ icon, title, description }) {
@@ -120,24 +120,6 @@ const LandingPage = () => {
 
             {/* Desktop Navigation Links (Hidden on Mobile) */}
             <div className="hidden md:flex space-x-6 items-center">
-              <Link
-                href="#features"
-                className="text-lg text-gray-600 hover:text-gray-900"
-              >
-                Features
-              </Link>
-              <Link
-                href="#mission"
-                className="text-lg text-gray-600 hover:text-gray-900"
-              >
-                Mission
-              </Link>
-              <Link
-                href="#sdgs"
-                className="text-lg text-gray-600 hover:text-gray-900"
-              >
-                SDGs
-              </Link>
               <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
                 <button className="bg-[#000033] text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-orange-700 transition-colors">
                   Get Started
@@ -150,27 +132,6 @@ const LandingPage = () => {
           {isMenuOpen && (
             <div className="md:hidden bg-white shadow-md">
               <div className="flex flex-col space-y-4 px-4 py-6">
-                <Link
-                  href="#features"
-                  className="text-lg text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#mission"
-                  className="text-lg text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Mission
-                </Link>
-                <Link
-                  href="#sdgs"
-                  className="text-lg text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  SDGs
-                </Link>
                 <Link
                   href={isSignedIn ? "/dashboard" : "/sign-in"}
                   onClick={() => setIsMenuOpen(false)}
@@ -193,8 +154,16 @@ const LandingPage = () => {
               <p className="mt-4 text-lg text-gray-700">Write, Share, and Connect in Your Language</p>
               <button className="mt-8 bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all">Start Writing</button>
             </div>
-            <div className="w-1/2">
-              {/* Placeholder for Image */}
+            <div className="w-1/2 flex justify-center items-center">
+              <div className="w-4/5">
+                <Image 
+                  src={heroImage}
+                  alt="Hero Image"
+                  layout="responsive"
+                  width={100}
+                  height={100}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -203,8 +172,8 @@ const LandingPage = () => {
         <section className="py-16 bg-white h-full flex items-center justify-center">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
             <div className="md:w-1/2">
-              <h2 className="text-3xl font-bold text-gray-900">Publish with Ease</h2>
-              <p className="mt-4 text-lg text-gray-700">Our platform offers seamless publishing tools to bring your stories to life.</p>
+              <h2 className="text-3xl font-bold text-gray-900">Easy Publishing</h2>
+              <p className="mt-4 text-lg text-gray-700">Publish your stories effortlessly with our tools.</p>
             </div>
             <div className="md:w-1/2 relative">
               <FloatingImage src={publish3d} alt="Publishing" className="w-32 h-auto object-contain" />
@@ -219,8 +188,8 @@ const LandingPage = () => {
               <FloatingImage src={read3d} alt="Explore Stories" className="w-32 h-auto object-contain" />
             </div>
             <div className="md:w-1/2">
-              <h2 className="text-3xl font-bold text-gray-900">Explore Stories</h2>
-              <p className="mt-4 text-lg text-gray-700">Discover a world of stories crafted by talented writers.</p>
+              <h2 className="text-3xl font-bold text-gray-900">Discover Stories</h2>
+              <p className="mt-4 text-lg text-gray-700">Find amazing stories by talented writers.</p>
               {/* Story preview cards */}
               <div className="story-cards mt-8">
                 {/* Add story cards here */}
@@ -249,8 +218,8 @@ const LandingPage = () => {
               <FloatingImage src={chatbot3d} alt="AI Chatbot" className="w-32 h-auto object-contain" />
             </div>
             <div className="md:w-1/2">
-              <h2 className="text-3xl font-bold text-gray-900">AI Chatbot Assistance</h2>
-              <p className="mt-4 text-lg text-gray-700">Interact with our AI chatbot for a seamless experience.</p>
+              <h2 className="text-3xl font-bold text-gray-900">Chat with Bengali AI</h2>
+              <p className="mt-4 text-lg text-gray-700">Get help from our AI Bengali chatbot anytime. Chat in Banglish or Bangla, it knows everything.</p>
               {/* Chat interface preview */}
               <div className="chat-interface mt-8">
                 {/* Add chat interface preview here */}
@@ -260,36 +229,18 @@ const LandingPage = () => {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-16 bg-white text-center">
+        <section className="py-16 bg-gray-900 text-center">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900">Join Our Community</h2>
-            <p className="mt-4 text-lg text-gray-700">Become a part of our vibrant community of writers and readers.</p>
+            <h2 className="text-4xl font-bold text-white">Join Us</h2>
+            <p className="mt-4 text-lg text-gray-300">Be part of our community of writers and readers.</p>
             <button className="mt-8 bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all">Join Now</button>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="py-8 bg-gray-900 text-white">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between">
-            <div className="mb-4 md:mb-0">
-              <h3 className="text-lg font-bold">Stay Connected</h3>
-              <div className="social-links mt-2">
-                {/* Add social media links here */}
-              </div>
-            </div>
-            <div className="mb-4 md:mb-0">
-              <h3 className="text-lg font-bold">Newsletter</h3>
-              <form className="mt-2">
-                <input type="email" placeholder="Your email" className="px-4 py-2 rounded-full text-gray-900" />
-                <button type="submit" className="ml-2 bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-all">Subscribe</button>
-              </form>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold">Quick Links</h3>
-              <ul className="mt-2">
-                {/* Add quick links here */}
-              </ul>
-            </div>
+        <footer className="py-8 bg-gray-900 text-white text-center">
+          <div className="max-w-7xl mx-auto">
+            <p className="text-lg"> 2025 All Rights Reserved.</p>
           </div>
         </footer>
       </header>
