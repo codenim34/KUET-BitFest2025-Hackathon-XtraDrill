@@ -94,7 +94,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
           >
             <MdVoiceChat className="mr-2" />
-            Bangali Bot
+            Bangali AI
           </Link>
           <Link
             href="/profile"
