@@ -18,6 +18,7 @@ import {
 import { MdHistoryEdu, MdVoiceChat } from "react-icons/md";
 import { FaRegUserCircle } from "react-icons/fa";
 import { PiPaintBrushBold } from "react-icons/pi";
+import { BiDonateHeart } from "react-icons/bi";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -102,6 +103,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           >
             <FaRegUserCircle className="mr-2" />
             Profile
+          </Link>
+          <Link
+            href="/contribute"
+            className="flex items-center text-gray-900 hover:text-orange-600 text-lg p-2"
+          >
+            <BiDonateHeart className="mr-2" />
+            Contribute
           </Link>
           
         </nav>
