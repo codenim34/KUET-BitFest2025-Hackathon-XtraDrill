@@ -31,80 +31,80 @@
 
 ## ✨ Key Features
 
-### 🤖 AI-Powered Learning
-- **Intelligent Bengali Chat**: Advanced natural language processing system that understands and responds in Bengali script (বাংলা). Features smart handling of technical terms, maintaining English for technical concepts while seamlessly integrating Bengali text. Perfect for technical discussions in Bengali.
+### 📍 Dashboard (`/dashboard`)
+- Analytics dashboard with real-time metrics
+![alt text](image.png)
+- Key statistics:
+  - Words translated
+  - Stories written
+  - Chat interactions
+  - Story loves
+- Interactive charts:
+  - Activity timeline (translations, stories, chats)
+  - Story length distribution
+- Recent activity feed with icons and timestamps
+- Responsive layout with grid system
 
-- **Voice Recognition**: State-of-the-art speech recognition system optimized for Bengali pronunciation. Supports both Bengali and English speech input, with real-time transcription and response generation. Includes voice feedback for pronunciation correction.
+### 📖 Stories (`/stories`)
+- Story management system with CRUD operations
+![alt text](image-1.png)
+- Real-time Bengali Transliteration:
+  - Intelligent word-by-word transliteration
+  - Space/punctuation-triggered conversion
+  - Cursor position preservation
+- Rich Text Editor Integration:
+![alt text](image-2.png)
+  - TinyMCE editor with Bengali support
+  - Real-time content synchronization
+  - Auto-save functionality
+- Multiple Bengali Font Support:
+![alt text](image-3.png)
+  - আবু জে এম আক্কাস
+  - চায়না তিস্তা
+  - হাসান প্রতিলিপি
+  - শহীদ শাফকাত সামির
+  - শহীদ তাহমিদ তামিম
+- Advanced PDF Export:
+  - Custom font embedding
+  - Multi-page support
+  - High-resolution output (2x scale)
+- Privacy Controls:
+  - Public/Private story settings
+  - Author attribution
+  - Love/Like system
 
-- **Adaptive Learning**: Personalized learning paths powered by AI that adjust to your proficiency level. The system tracks your progress, identifies areas for improvement, and dynamically adjusts content difficulty. Features spaced repetition for optimal retention.
+### 🎨 Canvas (`/canvas`)
+- Real-time collaborative whiteboard
+- TinyMCE rich text editor integration
+- Auto-saving with debounced updates
+- Multi-user editing via Pusher
+- Version history tracking
+- Bengali text optimization
+- Translation integration
+- Rich text formatting
 
-- **Real-time Translation**: Context-aware translation system that maintains the nuance of technical and cultural terms. Intelligently preserves English technical terms while translating surrounding context to Bengali, ensuring accurate technical communication.
+### 🗣️ Bengali Chat (`/bengali-chat`)
+- AI-powered Bengali language chatbot
+- Native Bengali UI with gradient design
+- Real-time responses
+- Custom Bengali font support
+- Responsive interface
+- Semantic HTML structure
+- Accessibility features
 
-### 🎨 Interactive Tools
-- **Interactive Canvas**: Real-time collaborative digital whiteboard with Bengali text support. Features:
-  - Multi-user real-time editing
-  - Smart shape recognition
-  - Bengali text input optimization
-  - Export to multiple formats
-  - Version history tracking
-  - Automatic layout suggestions
-
-- **Story Creation**: AI-assisted creative writing platform with:
-  - Bengali grammar and style suggestions
-  - Plot development assistance
-  - Character development tools
-  - Genre-specific templates
-  - Collaborative writing features
-  - Export to multiple formats
-
-- **Live Collaboration**: Real-time group learning environment powered by Pusher:
-  - Instant message synchronization
-  - Real-time cursor tracking
-  - Shared workspaces
-  - Live voice and text chat
-  - Session recording and playback
-  - Breakout room support
-
-- **Progress Tracking**: Comprehensive analytics dashboard featuring:
-  - Learning pace analysis
-  - Proficiency metrics
-  - Custom goal setting
-  - Achievement badges
-  - Progress visualization
-  - Performance insights
-
-### 🔐 User Experience
-- **Secure Authentication**: Enterprise-grade security with Clerk:
-  - Multi-factor authentication
-  - Social login integration
-  - Session management
-  - Role-based access control
-  - Activity monitoring
-  - Secure password policies
-
-- **Customizable Profiles**: Personalized user dashboards with:
-  - Learning style preferences
-  - Progress history
-  - Achievement showcase
-  - Custom avatar system
-  - Social connections
-  - Portfolio building
-
-- **Offline Support**: Progressive Web App capabilities:
-  - Offline content access
-  - Background synchronization
-  - Push notifications
-  - Installable on devices
-  - Automatic updates
-  - Data persistence
-
-- **Cross-platform**: Seamless experience across devices:
-  - Responsive design
-  - Touch optimization
-  - Keyboard shortcuts
-  - Dark/Light themes
-  - Accessibility features
-  - Cross-device sync
+### 👤 Profile (`/profile`)
+- User profile management
+- Public/Private story management
+- Story likes system
+- Profile image support
+- Email display
+- Shareable profile links
+- Story grid with:
+  - Title and content preview
+  - Creation date
+  - Love count
+  - Interactive hover effects
+- Tabbed interface for story categories
 
 ## 🚀 Installation Guide
 
