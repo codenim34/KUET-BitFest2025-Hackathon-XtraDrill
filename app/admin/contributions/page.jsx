@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/navigation';
 
-const ADMIN_USER_IDS = ['user_2r6nKR4A6JG1vSRXXDXWzRaSV6S'];
+const ADMIN_USER_IDS = ['user_2r6nKR4A6JG1vSRXXDXWzRaSV6S', 'user_2r6n5oSeNHtUf27FZHxhu9yCXxQ', 'user_2qL5YAi2C3byqT4QyZqK5t8CYr5']; 
 
 export default function AdminContributionsPage() {
   const { user, isLoaded } = useUser();
