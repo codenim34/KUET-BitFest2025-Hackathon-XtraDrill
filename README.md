@@ -1,5 +1,9 @@
 # অক্ষর (Okkhor)
 
+A Bengali language learning platform with AI-powered features and real-time collaboration.
+
+By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim34](https://github.com/codenim34), [@imtiaz-risat](https://github.com/imtiaz-risat)
+
 <div align="center">
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
@@ -32,65 +36,87 @@
 ## ✨ Key Features
 
 ### 📍 Dashboard (`/dashboard`)
-- Analytics dashboard with real-time metrics
 ![alt text](image.png)
+- Analytics dashboard with real-time metrics
 - Key statistics:
   - Words translated
   - Stories written
-  - Chat interactions
-  - Story loves
+  - Active users
+  - Contributions made
 - Interactive charts:
-  - Activity timeline (translations, stories, chats)
-  - Story length distribution
-- Recent activity feed with icons and timestamps
+  - Daily activity trends
+  - Translation metrics
+  - User engagement data
 - Responsive layout with grid system
 
 ### 📖 Stories (`/stories`)
-- Story management system with CRUD operations
 ![alt text](image-1.png)
+- Story management system with CRUD operations
 - Real-time Bengali Transliteration:
   - Intelligent word-by-word transliteration
   - Space/punctuation-triggered conversion
-  - Cursor position preservation
-- Rich Text Editor Integration:
+
 ![alt text](image-2.png)
+- Rich Text Editor Integration:
   - TinyMCE editor with Bengali support
   - Real-time content synchronization
   - Auto-save functionality
-- Multiple Bengali Font Support:
+
 ![alt text](image-3.png)
+- Multiple Bengali Font Support:
   - আবু জে এম আক্কাস
   - চায়না তিস্তা
   - হাসান প্রতিলিপি
-  - শহীদ শাফকাত সামির
-  - শহীদ তাহমিদ তামিম
 - Advanced PDF Export:
-  - Custom font embedding
-  - Multi-page support
-  - High-resolution output (2x scale)
+  - Custom page layouts
+  - Font embedding
+  - Header/footer customization
 - Privacy Controls:
-  - Public/Private story settings
-  - Author attribution
-  - Love/Like system
+  - Public/private visibility
+  - Sharing permissions
+  - Version history
 
 ### 🎨 Canvas (`/canvas`)
 - Real-time collaborative whiteboard
-- TinyMCE rich text editor integration
-- Auto-saving with debounced updates
-- Multi-user editing via Pusher
-- Version history tracking
-- Bengali text optimization
-- Translation integration
-- Rich text formatting
+- Features:
+  - TinyMCE integration
+  - Auto-saving capability
+  - Multi-user editing
+  - Version tracking
+  - Bengali text optimization
+  - Translation integration
+  - Rich text formatting
 ![alt text](image-4.png)
 
 ### 🗣️ Bengali Chat (`/bengali-chat`)
+![alt text](image-6.png)
 - AI-powered Bengali language chatbot
 - Native Bengali AI with gradient design
 - Real-time responses
 - User uploaded documents selection and querying
-![alt text](image-6.png)
+
 ![alt text](image-7.png)
+
+### 🤝 Contribute (`/contribute`)
+![alt text](image-9.png)
+- Banglish to Bangla contribution system
+- Features:
+  - Banglish text input
+  - Bengali text verification
+  - Real-time contribution status
+  - User-specific contributions tracking
+  - Contribution history
+
+### 👨‍💼 Admin Contributions (`/admin/contributions`)
+![alt text](image-10.png)
+- Contribution management dashboard
+- Features:
+  - Role-based access control
+  - Status-based filtering (Pending/Approved/Rejected)
+  - Contribution review system
+  - User contribution history
+  - Export capabilities (JSON format)
+  - Admin feedback system
 
 ### 👤 Profile (`/profile`)
 ![alt text](image-8.png)
@@ -98,13 +124,6 @@
 - Public/Private story management
 - Story likes system
 - Profile image support
-- Email display
-- Shareable profile links
-- Story grid with:
-  - Title and content preview
-  - Creation date
-  - Love count
-  - Interactive hover effects
 - Tabbed interface for story categories
 
 ## 🚀 Installation Guide
@@ -184,7 +203,6 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 📬 Contact
 
-Team XtraDrill - [@xtradrill](https://twitter.com/xtradrill)  
 Project Link: [https://github.com/takitajwar17/KUET-BitFest2025-Hackathon-XtraDrill](https://github.com/takitajwar17/KUET-BitFest2025-Hackathon-XtraDrill)
 
 ---
