@@ -82,17 +82,18 @@
 - Bengali text optimization
 - Translation integration
 - Rich text formatting
+![alt text](image-4.png)
 
 ### 🗣️ Bengali Chat (`/bengali-chat`)
 - AI-powered Bengali language chatbot
-- Native Bengali UI with gradient design
+- Native Bengali AI with gradient design
 - Real-time responses
-- Custom Bengali font support
-- Responsive interface
-- Semantic HTML structure
-- Accessibility features
+- User uploaded documents selection and querying
+![alt text](image-6.png)
+![alt text](image-7.png)
 
 ### 👤 Profile (`/profile`)
+![alt text](image-8.png)
 - User profile management
 - Public/Private story management
 - Story likes system
