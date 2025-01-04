@@ -29,7 +29,7 @@ export async function GET() {
     await connect();
     console.log('Connected to MongoDB');
     
-    const publicStories = await Story.find({ isPublic: true })
+    const publicStories = await Story.find({ isPrivate: false })
       .select('title content')
       .sort({ createdAt: -1 })
       .lean();
