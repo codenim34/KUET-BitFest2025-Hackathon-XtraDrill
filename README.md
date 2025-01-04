@@ -126,6 +126,20 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
 - Profile image support
 - Tabbed interface for story categories
 
+### 🔍 Search (`/search`)
+![alt text](image-11.png)
+- App-wide unified search system
+- Features:
+  - Real-time search results
+  - Multi-content type search:
+    - Stories with previews
+    - Canvas documents
+  - Interactive result cards
+  - Date-based organization
+  - Visual feedback and loading states
+  - Empty state handling
+  - Responsive grid layout
+
 ## 🚀 Installation Guide
 
 ### Prerequisites
