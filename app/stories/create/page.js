@@ -123,18 +123,18 @@ export default function CreateStory() {
               // Calculate new cursor position
               const cursorOffset = currentRequest.cursorPosition - 
                 (currentRequest.lastWordStart + currentRequest.lastWord.length);
-              
+　　 　 　 　
               // Construct the new text while preserving the rest
               const newText = 
                 currentValue.substring(0, currentRequest.lastWordStart) + 
                 transliterated + 
                 currentRequest.separator +
                 currentValue.substring(currentRequest.cursorPosition);
-              
+　　 　 　 　
               const newCursorPosition = currentRequest.lastWordStart + 
                 transliterated.length + 
                 cursorOffset;
-              
+　　 　 　 　
               // Update the input value and cursor position
               setTitle(newText);
               requestAnimationFrame(() => {
@@ -143,7 +143,7 @@ export default function CreateStory() {
               });
             }
           }
-          
+ 　 　 　
           // Clean up the request
           pendingRequests.delete(timestamp);
         }
@@ -203,59 +203,59 @@ export default function CreateStory() {
             cursorPosition,
             separator
           };
-          
+ 　 　 　
           // Store the request info
           pendingRequests.set(timestamp, requestInfo);
-          
+ 　 　 　
           console.log('Sending for transliteration:', lastWord);
           const transliterated = await transliterateText(lastWord);
-          
+ 　 　 　
           // Check if this is still the most recent request
           const isLatestRequest = Array.from(pendingRequests.keys())
             .filter(t => t > timestamp)
             .length === 0;
-            
+ 　 　 　
           if (!isLatestRequest) {
             console.log('Skipping outdated transliteration response');
             pendingRequests.delete(timestamp);
             return;
           }
-          
+ 　 　 　
           if (transliterated) {
             const currentRequest = pendingRequests.get(timestamp);
             const currentText = currentRequest.node.textContent;
-            
+ 　 　 　 　
             // Only apply if the text context hasn't changed significantly
             if (currentText.includes(currentRequest.lastWord)) {
               // Calculate new cursor position
               const cursorOffset = currentRequest.cursorPosition - 
                 (currentRequest.lastWordStart + currentRequest.lastWord.length);
-              
+ 　 　 　 　
               // Construct the new text while preserving the rest
               const newText = 
                 currentText.substring(0, currentRequest.lastWordStart) + 
                 transliterated + 
                 currentRequest.separator +
                 currentText.substring(currentRequest.cursorPosition);
-              
+ 　 　 　 　
               const newCursorPosition = currentRequest.lastWordStart + 
                 transliterated.length + 
                 cursorOffset;
-              
+ 　 　 　 　
               // Update content
               currentRequest.node.textContent = newText;
               lastProcessedText = newText;
-              
+ 　 　 　 　
               // Restore cursor position
               const newRange = currentRequest.editor.dom.createRng();
               newRange.setStart(currentRequest.node.firstChild, newCursorPosition);
               newRange.setEnd(currentRequest.node.firstChild, newCursorPosition);
               currentRequest.editor.selection.setRng(newRange);
-              
+ 　 　 　 　
               currentRequest.editor.setDirty(true);
             }
           }
-          
+ 　 　 　
           // Clean up the request
           pendingRequests.delete(timestamp);
         }
@@ -378,7 +378,13 @@ export default function CreateStory() {
             </button>
           </div>
         </div>
-
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800 text-sm">
+                <span className="font-semibold">✨ Banglish to Bangla:</span> Type in Banglish and see it transform to Bangla in real-time! 
+                Just press <kbd className="px-2 py-1 bg-white rounded border border-blue-200 text-sm mx-1">Space</kbd> or 
+                <kbd className="px-2 py-1 bg-white rounded border border-blue-200 text-sm mx-1">Enter</kbd> after each word.
+              </p>
+        </div>
         <div>
           <label className="block text-sm font-medium mb-2 text-gray-700">
             Content
@@ -447,6 +453,24 @@ export default function CreateStory() {
             )}
           </label>
         </div>
+
+        {isPrivate ? (
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <p className="text-purple-800 text-sm">
+              <span className="font-semibold">🔒 Private Story:</span> Only you can see this story. 
+              Perfect for personal thoughts, drafts, or content you're not ready to share yet.
+              You can always make it public later!
+            </p>
+          </div>
+        ) : (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <p className="text-green-800 text-sm">
+              <span className="font-semibold">🌎 Public Story:</span> Your story will be visible to everyone. 
+              Share your thoughts, experiences, and creativity with the world!
+              You can make it private anytime if you change your mind.
+            </p>
+          </div>
+        )}
 
         <div className="flex gap-4 pt-4">
           <Button 
