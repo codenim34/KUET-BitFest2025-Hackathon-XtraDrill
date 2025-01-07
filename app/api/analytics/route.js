@@ -1,39 +1,49 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
+import { auth } from '@clerk/nextjs';
 
 export async function GET() {
   try {
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const conn = await connectToDatabase();
     const db = conn.connection.db;
 
-    // Get stories collection stats
-    const stories = await db.collection('stories').find({}).toArray();
-    const totalStoriesWritten = stories.length;
+    // Get all stories (public + private) for the current user
+    const stories = await db.collection('stories').find({ 
+      authorId: userId,
+      // No isPrivate filter to get both public and private stories
+    }).toArray();
     
     // Calculate total loves (assuming loves is an array of user IDs)
     const totalLoves = stories.reduce((acc, story) => {
       return acc + (Array.isArray(story.loves) ? story.loves.length : 0);
     }, 0);
 
-    // Calculate total words in stories
+    // Calculate total words in stories (content + titles)
     const totalStoryWords = stories.reduce((acc, story) => {
-      const words = story.content?.trim().split(/\\s+/) || [];
-      return acc + (words.length || 0);
+      const contentWords = story.content?.trim().split(/\s+/) || [];
+      const titleWords = story.title?.trim().split(/\s+/) || [];
+      return acc + contentWords.length + titleWords.length;
     }, 0);
 
-    // Get canvas collection stats for total words translated
-    const canvasEntries = await db.collection('canvas').find({}).toArray();
+    // Get canvas collection stats for total words translated for this user
+    const canvasEntries = await db.collection('canvas').find({ userId }).toArray();
     const totalCanvasWords = canvasEntries.reduce((acc, entry) => {
-      const words = entry.content?.trim().split(/\\s+/) || [];
-      return acc + (words.length || 0);
+      const contentWords = entry.content?.trim().split(/\s+/) || [];
+      const titleWords = entry.title?.trim().split(/\s+/) || [];
+      return acc + contentWords.length + titleWords.length;
     }, 0);
 
     // Calculate total words translated (stories + canvas)
     const totalWordsTranslated = totalStoryWords + totalCanvasWords;
 
-    // Get chat interactions (from bengali-chat-history)
-    const chatHistory = await db.collection('bengali-chat-history').find({}).toArray();
-    const totalChatInteractions = chatHistory.length;
+    // Get chat interactions for this user (number of conversations)
+    const chatHistory = await db.collection('chats').find({ userId }).toArray();
+    const totalChatInteractions = chatHistory.length; // Count number of chat sessions
 
     // Generate time series data (last 7 days)
     const timeSeriesData = [];
@@ -65,18 +75,18 @@ export async function GET() {
     // Generate story length categories
     const storyLengthStats = {
       shortStories: stories.filter(s => {
-        const words = s.content?.trim().split(/\\s+/) || [];
+        const words = s.content?.trim().split(/\s+/) || [];
         return words.length < 500;
       }).length,
       mediumStories: stories.filter(s => {
-        const words = s.content?.trim().split(/\\s+/) || [];
+        const words = s.content?.trim().split(/\s+/) || [];
         return words.length >= 500 && words.length < 2000;
       }).length,
       longStories: stories.filter(s => {
-        const words = s.content?.trim().split(/\\s+/) || [];
+        const words = s.content?.trim().split(/\s+/) || [];
         return words.length >= 2000;
       }).length,
-      avgWordCount: Math.round(totalStoryWords / totalStoriesWritten) || 0
+      avgWordCount: Math.round(totalStoryWords / stories.length) || 0
     };
 
     // Get recent story activities (creations and loves)
@@ -101,7 +111,7 @@ export async function GET() {
     return NextResponse.json({
       totalStats: {
         totalWordsTranslated,
-        totalStoriesWritten,
+        totalStoriesWritten: stories.length,
         totalChatInteractions,
         totalLoves
       },
@@ -109,10 +119,11 @@ export async function GET() {
       storyLengthStats,
       recentActivities
     });
+
   } catch (error) {
-    console.error('Error fetching analytics:', error);
+    console.error('Analytics API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
