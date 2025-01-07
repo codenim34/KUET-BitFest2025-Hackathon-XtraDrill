@@ -18,6 +18,7 @@ export default function CanvasPage({ params }) {
   const [isSaving, setIsSaving] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [lastUpdateBy, setLastUpdateBy] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { canvasId } = useParams();
   const { userId } = useAuth();
 
@@ -44,6 +45,7 @@ export default function CanvasPage({ params }) {
         setContent(newContent);
         setTitle(newTitle);
         setLastUpdateBy(updatedBy);
+        setHasUnsavedChanges(false);
       }
     });
 
@@ -56,6 +58,7 @@ export default function CanvasPage({ params }) {
     setIsSaving(true);
     try {
       await updateCanvas(canvasId, { title, content, userId });
+      setHasUnsavedChanges(false);
     } catch (error) {
       console.error("Error saving canvas:", error);
     }
@@ -94,10 +97,17 @@ export default function CanvasPage({ params }) {
       if (content && !isLoading && !isSaving) {
         handleSave();
       }
-    }, 1000);
+    }, 2000); // Increased to 2 seconds to give more time for multiple changes
 
     return () => clearTimeout(timeoutId);
   }, [content]);
+
+  // Track unsaved changes
+  useEffect(() => {
+    if (!isLoading && !isSaving) {
+      setHasUnsavedChanges(true);
+    }
+  }, [content, title]);
 
   if (isLoading) {
     return <div className="container mx-auto p-6">Loading...</div>;
@@ -106,11 +116,41 @@ export default function CanvasPage({ params }) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-4 flex items-center justify-between">
-        <Link href="/canvas" className="flex items-center text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Canvases
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/canvas" className="flex items-center text-gray-600 hover:text-gray-900">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Canvases
+          </Link>
+          {hasUnsavedChanges && (
+            <span className="text-orange-600 text-sm animate-pulse">
+              ● Unsaved changes
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving || !hasUnsavedChanges}
+            className={`relative ${
+              hasUnsavedChanges 
+                ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
+            }`}
+          >
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving...
+              </span>
+            ) : hasUnsavedChanges ? (
+              "Save Changes"
+            ) : (
+              "✓ Saved"
+            )}
+          </Button>
           <Button 
             onClick={handleTranslate}
             disabled={isTranslating}
@@ -147,7 +187,10 @@ export default function CanvasPage({ params }) {
         <Editor
           apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
           value={content}
-          onEditorChange={(newContent) => setContent(newContent)}
+          onEditorChange={(newContent) => {
+            setContent(newContent);
+            setHasUnsavedChanges(true);
+          }}
           init={{
             height: 500,
             menubar: true,
@@ -162,15 +205,6 @@ export default function CanvasPage({ params }) {
               "removeformat | help",
           }}
         />
-      </div>
-
-      <div className="mt-4 flex justify-end">
-        <Button 
-          onClick={handleSave}
-          disabled={isSaving}
-        >
-          {isSaving ? "Saving..." : "Save Canvas"}
-        </Button>
       </div>
     </div>
   );
