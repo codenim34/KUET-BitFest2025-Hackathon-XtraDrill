@@ -141,9 +141,9 @@ export default function Dashboard() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="translations" stroke="#0088FE" name="Translations" />
-                    <Line type="monotone" dataKey="stories" stroke="#00C49F" name="Stories" />
-                    <Line type="monotone" dataKey="chats" stroke="#FFBB28" name="Chats" />
+                    <Line type="monotone" dataKey="stories" stroke="#0088FE" name="Stories" />
+                    <Line type="monotone" dataKey="chats" stroke="#00C49F" name="Chats" />
+                    <Line type="monotone" dataKey="canvases" stroke="#FFBB28" name="Canvases" />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

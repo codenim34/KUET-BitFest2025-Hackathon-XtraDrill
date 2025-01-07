@@ -31,7 +31,7 @@ export async function GET() {
     }, 0);
 
     // Get canvas collection stats for total words translated for this user
-    const canvasEntries = await db.collection('canvas').find({ userId }).toArray();
+    const canvasEntries = await db.collection('canvas').find({ authorId: userId }).toArray();
     const totalCanvasWords = canvasEntries.reduce((acc, entry) => {
       const contentWords = entry.content?.trim().split(/\s+/) || [];
       const titleWords = entry.title?.trim().split(/\s+/) || [];
@@ -54,25 +54,30 @@ export async function GET() {
       const dayStart = new Date(date.setHours(0, 0, 0, 0));
       const dayEnd = new Date(date.setHours(23, 59, 59, 999));
 
+      // Count user's stories for this day
       const dayStories = stories.filter(s => 
         new Date(s.createdAt) >= dayStart && new Date(s.createdAt) <= dayEnd
       ).length;
 
+      // Count user's chats for this day
       const dayChats = chatHistory.filter(c =>
-        new Date(c.timestamp) >= dayStart && new Date(c.timestamp) <= dayEnd
+        new Date(c.createdAt) >= dayStart && new Date(c.createdAt) <= dayEnd
+      ).length;
+
+      // Count user's canvases for this day
+      const dayCanvases = canvasEntries.filter(c =>
+        new Date(c.createdAt) >= dayStart && new Date(c.createdAt) <= dayEnd
       ).length;
 
       timeSeriesData.push({
         date: date.toLocaleDateString(),
         stories: dayStories,
         chats: dayChats,
-        translations: dayStories + (canvasEntries.filter(c =>
-          new Date(c.createdAt) >= dayStart && new Date(c.createdAt) <= dayEnd
-        ).length)
+        canvases: dayCanvases
       });
     }
 
-    // Generate story length categories
+    // Generate story length categories for user's stories
     const storyLengthStats = {
       shortStories: stories.filter(s => {
         const words = s.content?.trim().split(/\s+/) || [];
@@ -89,15 +94,15 @@ export async function GET() {
       avgWordCount: Math.round(totalStoryWords / stories.length) || 0
     };
 
-    // Get recent story activities (creations and loves)
+    // Get recent activities only for this user
     const recentActivities = [
-      // Story creations
+      // Story creations by this user
       ...stories.map(story => ({
         type: 'story_created',
         title: story.title,
         timestamp: story.createdAt
       })),
-      // Story loves
+      // Story loves received by this user's stories
       ...stories.filter(story => Array.isArray(story.loves) && story.loves.length > 0).map(story => ({
         type: 'story_loved',
         title: story.title,
