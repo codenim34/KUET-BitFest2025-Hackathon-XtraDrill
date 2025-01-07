@@ -8,6 +8,14 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { getCanvasByAuthor, createCanvas } from "@/lib/actions/canvas.actions";
 import mongoose from "mongoose";
 
+const CanvasCardSkeleton = () => (
+  <div className="block p-4 border rounded-lg animate-pulse">
+    <div className="h-6 w-3/4 bg-gray-200 rounded mb-2"></div>
+    <div className="h-4 w-1/2 bg-gray-200 rounded mb-2"></div>
+    <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+  </div>
+);
+
 export default function CanvasPage() {
   const router = useRouter();
   const { userId } = useAuth();
@@ -48,25 +56,34 @@ export default function CanvasPage() {
     }
   };
 
-  if (isLoading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
-  }
-
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Canvases</h1>
+        <h1 className="text-2xl font-bold">
+          {isLoading ? (
+            <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+          ) : (
+            "My Canvases"
+          )}
+        </h1>
         <Button 
           onClick={handleCreateCanvas}
-          id="createCanvasButton" // Add an ID for easy reference
-          data-create-canvas="true" // Add a data attribute for easier selection
+          id="createCanvasButton"
+          data-create-canvas="true"
+          disabled={isLoading}
+          className={isLoading ? "opacity-50" : ""}
         >
           Create New Canvas
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {canvases.map((canvas) => (
+        {isLoading ? (
+          // Show 6 skeleton cards while loading
+          Array.from({ length: 6 }).map((_, index) => (
+            <CanvasCardSkeleton key={index} />
+          ))
+        ) : canvases.map((canvas) => (
           <Link 
             href={`/canvas/${canvas._id}`} 
             key={canvas._id}
@@ -77,6 +94,12 @@ export default function CanvasPage() {
             <p className="text-sm text-gray-500">Created: {new Date(canvas.createdAt).toLocaleDateString()}</p>
           </Link>
         ))}
+
+        {!isLoading && canvases.length === 0 && (
+          <div className="col-span-full text-center py-8 text-gray-500">
+            No canvases yet. Create your first canvas to get started!
+          </div>
+        )}
       </div>
     </div>
   );
