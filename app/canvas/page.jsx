@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { getCanvasByAuthor, createCanvas } from "@/lib/actions/canvas.actions";
 import mongoose from "mongoose";
+import { Loader2 } from "lucide-react";
 
 const CanvasCardSkeleton = () => (
   <div className="block p-4 border rounded-lg animate-pulse">
@@ -22,6 +23,7 @@ export default function CanvasPage() {
   const { user } = useUser();
   const [canvases, setCanvases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     const fetchCanvases = async () => {
@@ -38,21 +40,28 @@ export default function CanvasPage() {
   }, [userId]);
 
   const handleCreateCanvas = async () => {
-    if (!user || !userId) return;
+    if (!user || !userId || isCreating) return;
 
-    const authorName = user.fullName || user.firstName || user.username || user.emailAddresses[0]?.emailAddress || "Anonymous User";
-    const _id = new mongoose.Types.ObjectId();
-    
-    const result = await createCanvas({
-      _id,
-      title: "Untitled Canvas",
-      content: " ",  
-      authorId: userId,
-      authorName
-    });
+    try {
+      setIsCreating(true);
+      const authorName = user.fullName || user.firstName || user.username || user.emailAddresses[0]?.emailAddress || "Anonymous User";
+      const _id = new mongoose.Types.ObjectId();
+      
+      const result = await createCanvas({
+        _id,
+        title: "Untitled Canvas",
+        content: " ",  
+        authorId: userId,
+        authorName
+      });
 
-    if (result.success) {
-      router.push(`/canvas/${result.data._id}`);
+      if (result.success) {
+        router.push(`/canvas/${result.data._id}`);
+      }
+    } catch (error) {
+      console.error("Error creating canvas:", error);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -70,16 +79,22 @@ export default function CanvasPage() {
           onClick={handleCreateCanvas}
           id="createCanvasButton"
           data-create-canvas="true"
-          disabled={isLoading}
+          disabled={isLoading || isCreating}
           className={isLoading ? "opacity-50" : ""}
         >
-          Create New Canvas
+          {isCreating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create New Canvas"
+          )}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
-          // Show 6 skeleton cards while loading
           Array.from({ length: 6 }).map((_, index) => (
             <CanvasCardSkeleton key={index} />
           ))

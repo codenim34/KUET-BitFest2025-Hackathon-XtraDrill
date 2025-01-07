@@ -6,7 +6,7 @@ import { getStories } from "@/lib/actions/story.actions";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, User2, Heart } from "lucide-react";
+import { CalendarDays, User2, Heart, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function StoriesPage() {
@@ -15,6 +15,7 @@ export default function StoriesPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [isCreatingStory, setIsCreatingStory] = useState(false);
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -69,6 +70,18 @@ export default function StoriesPage() {
     }
   };
 
+  const handleCreateStory = () => {
+    if (!user || isCreatingStory) return;
+    
+    try {
+      setIsCreatingStory(true);
+      router.push("/stories/create");
+    } catch (error) {
+      console.error("Error navigating to create story:", error);
+      setIsCreatingStory(false);
+    }
+  };
+
   if (error) {
     return <div className="text-red-500">Error: {error}</div>;
   }
@@ -85,11 +98,20 @@ export default function StoriesPage() {
           <h1 className="text-4xl font-bold text-gray-900">Stories</h1>
           <p className="text-gray-600 mt-2">Share your thoughts and experiences</p>
         </div>
-        <Link href="/stories/create">
-          <Button className="bg-orange-600 hover:bg-orange-700 text-white">
-            Create New Story
-          </Button>
-        </Link>
+        <Button
+          onClick={handleCreateStory}
+          className="bg-orange-600 hover:bg-orange-700 text-white"
+          disabled={!user || isCreatingStory}
+        >
+          {isCreatingStory ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create New Story"
+          )}
+        </Button>
       </div>
       
       {loading ? (
