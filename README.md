@@ -36,7 +36,7 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
 ## ✨ Key Features
 
 ### 📍 Dashboard (`/dashboard`)
-![alt text](image.png)
+![alt text](public/screenshots/image.png)
 - Analytics dashboard with real-time metrics
 - Key statistics:
   - Words translated
@@ -50,19 +50,19 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
 - Responsive layout with grid system
 
 ### 📖 Stories (`/stories`)
-![alt text](image-1.png)
+![alt text](public/screenshots/image-1.png)
 - Story management system with CRUD operations
 - Real-time Bengali Transliteration:
   - Intelligent word-by-word transliteration
   - Space/punctuation-triggered conversion
 
-![alt text](image-2.png)
+![alt text](public/screenshots/image-2.png)
 - Rich Text Editor Integration:
   - TinyMCE editor with Bengali support
   - Real-time content synchronization
   - Auto-save functionality
 
-![alt text](image-3.png)
+![alt text](public/screenshots/image-3.png)
 - Multiple Bengali Font Support:
   - আবু জে এম আক্কাস
   - চায়না তিস্তা
@@ -86,19 +86,19 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
   - Bengali text optimization
   - Translation integration
   - Rich text formatting
-![alt text](image-4.png)
+![alt text](public/screenshots/image-4.png)
 
 ### 🗣️ Bengali Chat (`/bengali-chat`)
-![alt text](image-6.png)
+![alt text](public/screenshots/image-6.png)
 - AI-powered Bengali language chatbot
 - Native Bengali AI with gradient design
 - Real-time responses
 - User uploaded documents selection and querying
 
-![alt text](image-7.png)
+![alt text](public/screenshots/image-7.png)
 
 ### 🤝 Contribute (`/contribute`)
-![alt text](image-9.png)
+![alt text](public/screenshots/image-9.png)
 - Banglish to Bangla contribution system
 - Features:
   - Banglish text input
@@ -108,7 +108,7 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
   - Contribution history
 
 ### 👨‍💼 Admin Contributions (`/admin/contributions`)
-![alt text](image-10.png)
+![alt text](public/screenshots/image-10.png)
 - Contribution management dashboard
 - Features:
   - Role-based access control
@@ -119,15 +119,15 @@ By Team XtraDrill - [@takitajwar17](https://github.com/takitajwar17), [@codenim3
   - Admin feedback system
 
 ### 👤 Profile (`/profile`)
-![alt text](image-8.png)
+![alt text](public/screenshots/image-8.png)
 - User profile management
 - Public/Private story management
 - Story likes system
-- Profile image support
+- Profile public/screenshots/image support
 - Tabbed interface for story categories
 
 ### 🔍 Search (`/search`)
-![alt text](image-11.png)
+![alt text](public/screenshots/image-11.png)
 - App-wide unified search system
 - Features:
   - Real-time search results
